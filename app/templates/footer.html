@@ -1,0 +1,48 @@
+{% if request.user.is_authenticated %}
+<div class="fixed-bottom bg-warning px-3 mx-auto">
+    <div class="col-lg-4 mx-auto">
+
+        <div class="d-flex justify-content-between px-4 py-2">
+            <a href="#">
+                <span onclick="history.back()"
+                    class="material-symbols-outlined fs-1 fw-bold text-dark">
+                    arrow_back_ios
+                </span>
+            </a>
+
+            {% if request.user.role != 'customer' %}
+
+            <a class="text-dark"
+                href="">
+                <span class="material-symbols-outlined fs-1 fw-bold">
+                    home
+                </span>
+            </a>
+            <a href="">
+                <span class="material-symbols-outlined fs-1 fw-bold text-dark">
+                    book_online
+                </span>
+            </a>
+
+            {% else %}
+            <a class="text-dark"
+                href="">
+                <span class="material-symbols-outlined fs-1 fw-bold">
+                    home
+                </span>
+            </a>
+
+            {% endif %}
+
+
+
+            <a class="text-dark"
+                href="{% url 'create' %}">
+                <span class="material-symbols-outlined fs-1 fw-bold">
+                    add_circle
+                </span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}

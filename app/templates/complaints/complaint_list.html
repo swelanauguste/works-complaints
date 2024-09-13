@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+
+{% block content %}
+<h1>Complaints</h1>
+<hr>
+<p class="text-end"><a href="{% url 'create' %}">Add</a></p>
+<hr>
+
+<div class="table-responsive small">
+    <table class="table small table-hover table-sm">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Complaint</th>
+                <th scope="col">Name</th>
+                <th scope="col">Zone</th>
+                <th scope="col">Address</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ob in object_list %}
+            <tr>
+                <th scope="row">{{forloop.counter}}</th>
+                <td><a href="{% url 'detail' ob.slug %}">{{ob|upper}}</a></td>
+                <td>{{ob.name|title}}</td>
+                <td>{{ob.zone|title}}</td>
+                <td>{{ob.address|title}}</td>
+                <td>{{ob.phone}}</td>
+                <td>{{ob.created_at}}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td>No complaints.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}
