@@ -12,7 +12,7 @@ class Zone(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.district.upper()} - District {self.name.upper()}"
+        return f"{self.district.upper()} - ({self.name.upper()})"
 
 
 class Category(models.Model):

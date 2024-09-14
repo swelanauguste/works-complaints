@@ -5,12 +5,57 @@
 
 {% block content %}
 <h1>Complaints</h1>
+<p class="text-end me-lg-3"><a href="{% url 'create' %}">Add</a></p>
+<form method="GET" action="{% url 'list' %}">
+    <div class="col-lg-4 mx-auto">
+        <input class="w-100 form-control" type="text" name="search" value="{{ search_query }}" placeholder="Search complaints...">
+    </div>
+    <br>
+    <div class="col-lg-4 mx-auto">
+        <div class="row">
+            <div class="col-lg-6 mb-2 mb-lg-0">
+                <select name="zone" onchange="this.form.submit()">
+                    <option value="">All Zones</option>
+                    {% for zone in zones %}
+                    <option value="{{ zone.id }}" {% if zone.id|stringformat:"s" == zone_filter %}selected{% endif %}>{{ zone }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- <div class="col">
+                <select name="category">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category.id|stringformat:"s" == category_filter %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div> -->
+            <!-- <div class="col">
+                <select name="sort"onchange="this.form.submit()">
+                    <option value="created_at" {% if sort_by == 'created_at' %}selected{% endif %}>Created At</option>
+                    <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name</option>
+                </select>
+            </div> -->
+            <div class="col-lg-6">
+                <select name="order" onchange="this.form.submit()">
+                    <option value="asc" {% if order == 'asc' %}selected{% endif %}>Ascending</option>
+                    <option value="desc" {% if order == 'desc' %}selected{% endif %}>Descending</option>
+                </select>
+            </div>
+            <div class="col mt-2">
+                <a class="text-muted" href="/">reset</a>
+            </div>
+        </div>
+    </div>
+</form>
 <hr>
-<p class="text-end"><a href="{% url 'create' %}">Add</a></p>
-<hr>
-
+{% if object_list.has_previous %}
+    <a href="?page={{ object_list.previous_page_number }}">Previous</a>
+{% endif %}
+{% if object_list.has_next %}
+    <a href="?page={{ object_list.next_page_number }}">Next</a>
+{% endif %}
 <div class="table-responsive small">
-    <table class="table small table-hover table-sm">
+    <table class="table small table-hover table-sm table-striped">
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -26,12 +71,12 @@
             {% for ob in object_list %}
             <tr>
                 <th scope="row">{{forloop.counter}}</th>
-                <td><a href="{% url 'detail' ob.slug %}">{{ob|upper}}</a></td>
-                <td>{{ob.name|title}}</td>
-                <td>{{ob.zone|title}}</td>
-                <td>{{ob.address|title}}</td>
-                <td>{{ob.phone}}</td>
-                <td>{{ob.created_at}}</td>
+                <td><a href="{% url 'detail' ob.slug %}">{{ob|title}}</a></td>
+                <td><a href="{% url 'detail' ob.slug %}">{{ob.name|title}}</a></td>
+                <td><a href="{% url 'detail' ob.slug %}">{{ob.zone|upper}}</a></td>
+                <td><a href="{% url 'detail' ob.slug %}">{{ob.address|title}}</a></td>
+                <td><a href="{% url 'detail' ob.slug %}">{{ob.phone}}</a></td>
+                <td><a href="{% url 'detail' ob.slug %}">{{ob.created_at}}</a></td>
             </tr>
             {% empty %}
             <tr>
@@ -41,5 +86,11 @@
         </tbody>
     </table>
 </div>
+{% if object_list.has_previous %}
+    <a href="?page={{ object_list.previous_page_number }}">Previous</a>
+{% endif %}
+{% if object_list.has_next %}
+    <a href="?page={{ object_list.next_page_number }}">Next</a>
+{% endif %}
 
 {% endblock content %}

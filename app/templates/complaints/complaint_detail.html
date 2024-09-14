@@ -6,31 +6,36 @@
 
 {% block content %}
 <div class="container">
-    <h1>{{object|title}}</h1>
-    <hr>
-    <p>{{object.complaint}}</p>
-    <p>{{object.address|title}}, {{object.phone}}</p>
-    <p>{{object.created_at}}</p>
-    <hr>
-    <!-- <p>Status/Priority: {{ticket.status|title}}/{{ticket.priority|title}}</p> -->
-    <p>Investigating officer:
-    {{ complaint_investigator|default:"-" }}
-    </p>
-    <p>
-    <form action=""
-        method="post">
-        {% csrf_token %}
-        {{ci_form|crispy}}
-        <button type="submit">Submit</button>
-    </form>
-    </p>
-
+    <div class="row">
+        <div class="col-lg-6 p-lg-5 m-4">
+            <h1>{{object|title}}</h1>
+            <hr>
+            <p>{{object.complaint}}</p>
+            <p>{{object.address|title}}, {{object.phone}}</p>
+            <p>{{object.created_at}}</p>
+            <hr>
+            <!-- <p>Status/Priority: {{ticket.status|title}}/{{ticket.priority|title}}</p> -->
+            <p>Investigating officer:
+                    <a href="">{{ complaint_investigator.investigator|default:"-"|upper }}</a>
+            </p>
+        </div>
+        <div class="col p-lg-5 m-4">
+            <h1>Investigating officer</h1>
+            <p>
+            <form action=""
+                method="post">
+                {% csrf_token %}
+                {{ci_form|crispy}}
+                <button type="submit">Submit</button>
+            </form>
+            </p>
+        </div>
+    </div>
 
     <p title="created"
         class="text-end text-muted small"><a class="text-muted"
             href="">{{ticket.created_by.first_name}}</a>
         {{ticket.created_at|naturaltime}}</p>
-    <hr>
 
     <!-- {% if request.user.role == "agent" or request.user.role == "admin" %}
     <a href="">Update</a>
