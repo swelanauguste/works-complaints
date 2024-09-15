@@ -227,8 +227,8 @@ else:
 
 
 # PWA settings
-PWA_APP_NAME = "INFR-Tickets"
-PWA_APP_DESCRIPTION = "Ticketing system for the ICT Unit"
+PWA_APP_NAME = "Complaints"
+PWA_APP_DESCRIPTION = "Complaints"
 PWA_APP_THEME_COLOR = "#0A0302"
 PWA_APP_BACKGROUND_COLOR = "#ffffff"
 PWA_APP_DISPLAY = "standalone"

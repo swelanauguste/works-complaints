@@ -9,10 +9,11 @@ from django.views.generic.edit import FormMixin
 from .forms import ComplaintForm, ComplaintInvestigatorForm
 from .models import Complaint, ComplaintInvestigator, Zone
 
+
 @login_required
 def complaint_list(request):
     # Get all complaints
-    complaints = Complaint.objects.all()
+    complaints = Complaint.objects.all().order_by("-created_at")
     zones = Zone.objects.all()
     # Search functionality
     search_query = request.GET.get("search", "")
@@ -34,16 +35,16 @@ def complaint_list(request):
     # if category_filter:
     #     complaints = complaints.filter(category__id=category_filter)
 
-    # Sorting functionality
-    sort_by = request.GET.get("sort", "created_at")  # Default sorting by created_at
-    order = request.GET.get("order", "asc")  # Default order is ascending
-    if order == "desc":
-        sort_by = f"-{sort_by}"
-    complaints = complaints.order_by(sort_by)
+    # # Sorting functionality
+    # sort_by = request.GET.get("sort", "created_at")  # Default sorting by created_at
+    # order = request.GET.get("order", "desc")  # Default order is ascending
+    # if order == "desc":
+    #     sort_by = f"-{sort_by}"
+    # complaints = complaints.order_by('sort_by')
 
     # Pagination (optional)
     page = request.GET.get("page", 1)
-    paginator = Paginator(complaints, 25)  # Show 10 complaints per page
+    paginator = Paginator(complaints, 18)  # Show 10 complaints per page
     complaints = paginator.get_page(page)
 
     context = {
@@ -52,8 +53,8 @@ def complaint_list(request):
         "zone_filter": zone_filter,
         # "category_filter": category_filter,
         "zones": zones,
-        "sort_by": sort_by,
-        "order": order,
+        # "sort_by": sort_by,
+        # "order": order,
     }
 
     return render(request, "complaints/complaint_list.html", context)

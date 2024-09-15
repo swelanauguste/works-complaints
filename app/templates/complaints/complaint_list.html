@@ -4,25 +4,23 @@
 
 
 {% block content %}
-<h1>Complaints</h1>
-<p class="text-end me-lg-3"><a href="{% url 'create' %}">
-  <img style="height: 3rem;" src="{% static 'icons/add.svg' %}" alt="">  
-</a></p>
+<div class="py-5">
 <form method="GET" action="{% url 'list' %}">
-    <div class="col-lg-4 mx-auto">
-        <input class="w-100 form-control" type="text" name="search" value="{{ search_query }}" placeholder="Search complaints...">
-    </div>
-    <br>
-    <div class="col-lg-4 mx-auto">
-        <div class="row">
-            <div class="col-lg-6 mb-2 mb-lg-0">
-                <select id="filter-zones" name="zone" onchange="this.form.submit()">
-                    <option value="">All Zones</option>
-                    {% for zone in zones %}
-                    <option value="{{ zone.id }}" {% if zone.id|stringformat:"s" == zone_filter %}selected{% endif %}>{{ zone }}</option>
-                    {% endfor %}
-                </select>
+    <div class="col-lg-8 mx-auto">
+       <div class="row"> 
+            <div class="col-lg-6 px-lg-0">
+                <input class="form-control" type="text" name="search" value="{{ search_query }}" placeholder="Search complaints...">
             </div>
+            <div class="col-lg-3 col-12 mt-2 mt-lg-0">
+                        <select id="filter-zones" name="zone" onchange="this.form.submit()">
+                        <option value="">All Zones</option>
+                        {% for zone in zones %}
+                        <option value="{{ zone.id }}" {% if zone.id|stringformat:"s" == zone_filter %}selected{% endif %}>{{ zone }}</option>
+                        {% endfor %}
+                        </select>
+                    </div>
+        </div>
+    </div>
             <!-- <div class="col">
                 <select name="category">
                     <option value="">All Categories</option>
@@ -37,48 +35,46 @@
                     <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name</option>
                 </select>
             </div> -->
-            <div class="col-lg-6">
-                <select name="order" onchange="this.form.submit()">
-                    <option value="asc" {% if order == 'asc' %}selected{% endif %}>Ascending</option>
-                    <option value="desc" {% if order == 'desc' %}selected{% endif %}>Descending</option>
-                </select>
-            </div>
-            <div class="col mt-2">
-                <a class="text-muted" href="/">reset</a>
-            </div>
-        </div>
-    </div>
 </form>
-<hr>
-{% if object_list.has_previous %}
-    <a href="?page={{ object_list.previous_page_number }}">Previous</a>
-{% endif %}
-{% if object_list.has_next %}
-    <a href="?page={{ object_list.next_page_number }}">Next</a>
-{% endif %}
-<div class="table-responsive small">
-    <table class="table small table-hover table-sm table-striped">
+<br>
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        {% if object_list.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ object_list.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if zone_filter %}&zone={{ zone_filter }}{% endif %}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        {% endif %}
+        {% for num in object_list.paginator.page_range %}
+            <li class="page-item {% if object_list.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if zone_filter %}&zone={{ zone_filter }}{% endif %}">{{ num }}</a>
+            </li>
+        {% endfor %}
+        {% if object_list.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ object_list.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if zone_filter %}&zone={{ zone_filter }}{% endif %}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+<div class="table-responsive">
+    <table class="table table-hover table-m table-striped">
         <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">Complaint</th>
-                <th scope="col">Name</th>
-                <th scope="col">Zone</th>
-                <th scope="col">Address</th>
-                <th scope="col">Phone</th>
-                <th scope="col">Created</th>
+                <th scope="col">Complaints</th>
             </tr>
         </thead>
         <tbody>
             {% for ob in object_list %}
             <tr>
                 <th scope="row">{{forloop.counter}}</th>
-                <td><a href="{% url 'detail' ob.slug %}">{{ob|title}}</a></td>
-                <td><a href="{% url 'detail' ob.slug %}">{{ob.name|title}}</a></td>
-                <td><a href="{% url 'detail' ob.slug %}">{{ob.zone|upper}}</a></td>
-                <td><a href="{% url 'detail' ob.slug %}">{{ob.address|title}}</a></td>
-                <td><a href="{% url 'detail' ob.slug %}">{{ob.phone}}</a></td>
-                <td><a href="{% url 'detail' ob.slug %}">{{ob.created_at}}({{ob.created_at|naturaltime}})</a></td>
+                <td><a class="text-decoration-none" href="{% url 'detail' ob.slug %}">{{ob.zone}} | 
+                    {{ob.address|title}} | 
+                    <a href="tel:{{ob.phone}}">{{ob.phone}}</a></a> | {{ob.created_at|naturaltime}}</td>
             </tr>
             {% empty %}
             <tr>
@@ -88,11 +84,28 @@
         </tbody>
     </table>
 </div>
-{% if object_list.has_previous %}
-    <a href="?page={{ object_list.previous_page_number }}">Previous</a>
-{% endif %}
-{% if object_list.has_next %}
-    <a href="?page={{ object_list.next_page_number }}">Next</a>
-{% endif %}
-
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        {% if object_list.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ object_list.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if zone_filter %}&zone={{ zone_filter }}{% endif %}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        {% endif %}
+        {% for num in object_list.paginator.page_range %}
+            <li class="page-item {% if object_list.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if zone_filter %}&zone={{ zone_filter }}{% endif %}">{{ num }}</a>
+            </li>
+        {% endfor %}
+        {% if object_list.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ object_list.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if zone_filter %}&zone={{ zone_filter }}{% endif %}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+</div>
 {% endblock content %}

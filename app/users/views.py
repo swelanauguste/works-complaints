@@ -89,4 +89,3 @@ def user_detail(request):
     else:
         user = get_object_or_404(User, pk=request.user.id)
     return render(request, "users/user_detail.html", {"user": user})
-    return render(request, "users/user_detail.html", {"user": user})

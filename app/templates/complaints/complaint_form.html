@@ -4,42 +4,14 @@
 
 
 {% block content %}
+<form class="col-lg-4"
+    method="post">
+    <h1 class="display-4">Create</h1>
 
-<div class="col-lg-6 col-12 ms-lg-5 shadow p-lg-5 p-3 rounded-5">
-    <h1>Create</h1>
-    <hr>
-    <form action=""
-        method="post">
-        {% csrf_token %}
-        <div class="row">
-            <div class="col-lg-6">
-                {{ form.name|as_crispy_field }}
-            </div>
-            <div class="col-lg-6">
-                {{ form.phone|as_crispy_field }}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6">
-                {{ form.address|as_crispy_field }}
-            </div>
-            <div class="col-lg-6">
-                {{ form.email|as_crispy_field }}
-            </div>
-        </div>
-        <hr>
-        <div class="row">
-            <div class="col-lg-6-lg-6">
-                {{ form.zone|as_crispy_field }}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg">
-                {{ form.complaint|as_crispy_field }}
-            </div>
-        </div>
+    {% csrf_token %}
+  {{form|crispy}}
+    <div class="d-grid">
         <button type="submit">Submit</button><br><br>
-        <a href="{% url 'list' %}">Cancel</a>
-    </form>
-</div>
+    </div>
+</form>
 {% endblock content %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1 class="display-4 fw-bold text-center">{{user}}</h1>
+<div class="col-lg-4 p-lg-5 mx-auto">
+
+    <p class="text-end"><a href="{% url 'user-update' %}"><img
+                src="{% static 'icons/edit.svg' %}"
+                alt="{% static 'icons/edit.svg' %}"></a></p>
+
+    <p class="border p-2"><strong>Role: </strong>{{user.role|title}}</p>
+    <p class="border p-2"><strong>Phone: </strong><a href="tel:{{user.phone}}">
+            {{user.phone}}</a></p>
+    <p class="border p-2"><strong>e-mail: </strong><a href="mailto:{{user.email}}">{{user.email}}</a></p>
+    <p class="border p-2"><strong>Username: </strong>{{user.username}}
+    </p><br><br><hr>
+    <p class="text-end"> <a href="{% url 'logout' %}"><img
+                src="{% static 'icons/logout.svg' %}"
+                alt="{% static 'icons/logout.svg' %}"></a></p>
+</div>
+
+{% endblock content %}

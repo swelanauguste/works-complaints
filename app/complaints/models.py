@@ -12,7 +12,7 @@ class Zone(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.district.upper()} - ({self.name.upper()})"
+        return f"{self.name.upper()}| {self.district.upper()}"
 
 
 class Category(models.Model):
@@ -32,19 +32,18 @@ class Complaint(models.Model):
         Zone,
         on_delete=models.CASCADE,
         null=True,
-        help_text="Where the complaint is from",
     )
-    name = models.CharField(max_length=100, help_text="Your name")
+    name = models.CharField(max_length=100)
     slug = models.SlugField(
-        max_length=100, help_text="Your name", unique=True, null=True, blank=True
+        max_length=100, unique=True, null=True, blank=True
     )
-    email = models.EmailField(blank=True, null=True, help_text="Your email")
-    address = models.CharField(max_length=200, help_text="Your address")
-    phone = models.CharField(max_length=20, help_text="Your phone number")
+    email = models.EmailField(blank=True, null=True)
+    address = models.CharField(max_length=200)
+    phone = models.CharField(max_length=20)
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, blank=True, null=True
     )
-    complaint = models.TextField(help_text="Your complaint", blank=True, null=True)
+    complaint = models.TextField( blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

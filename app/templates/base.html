@@ -11,42 +11,43 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1">
 
-    <title>ICT Unit - INFR</title>
+    <title>Complaints - INFR</title>
     <script src="{% static 'js/jquery.min.js' %}"></script>
+    <link rel="stylesheet"
+        href="{% static 'css/select2.min.css' %}">
+    <script src="{% static 'js/select2.min.js' %}"></script>
     <link rel="stylesheet"
         href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet"
         href="{% static 'css/montserrat.css' %}">
-    <link rel="stylesheet"
-        href="{% static 'css/select2.min.css' %}">
-    <script src="{% static 'js/select2.min.js' %}"></script>
+
     <link rel="stylesheet"
         href="{% static 'css/styles.css' %}">
 </head>
 
 <body class="container-fluid min-vh-100">
-    {% include 'nav-bar.html' %}
-    {% include 'messages.html' %}
-    <div class="row">
-        <div class="col-lg-2">
-            {% include 'side-bar.html' %}
-        </div>
-        <div class="col pb-5">
-            {% block content %}
+    {% include 'top.html' %}
 
-            {% endblock content %}
-        </div>
+    {% include 'messages.html' %}
+    <div class="py-5 my-5">
+        {% block content %}
+
+        {% endblock content %}
     </div>
+    {% include 'bottom.html' %}
+
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script>
-        $('button[type="submit"]').addClass('btn btn-sm btn-dark rounded-2 px-5');
-        $('input[type="text"]').addClass('form-control form-control-sm rounded-2 border border-secondary');
-        $('input[type="password"]').addClass('rounded-2');
-        $('input[type="email"]').addClass('form-control form-control-sm rounded-2 border border-secondary');
+        var commonClasses = 'form-control form-control-sm rounded-2 border border-secondary'
+        $('button[type="submit"]').addClass('btn btn-dark rounded-2 px-5');
+        $('input[type="text"]').addClass(commonClasses);
+        $('input[type="password"]').addClass(commonClasses, 'rounded-2');
+        $('input[type="email"]').addClass(commonClasses);
         $('input[type="file"]').addClass('rounded-2');
-        $('select').addClass('form-control form-control-sm rounded-2 border border-secondary');
-        $('textarea').addClass('form-control form-control-sm rounded-2 border border-secondary');
-        $('a').addClass('text-decoration-none text-dark');
+        $('select').addClass(commonClasses);
+        $('textarea').addClass(commonClasses);
+        $('a').addClass('text-dark');
+        $('.page').addClass('badge text-bg-dark text-white text-decoration-none');
         $('#filter-zones').select2();
         $('.select').select2();
     </script>

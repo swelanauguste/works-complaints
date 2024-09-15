@@ -20,4 +20,5 @@ class ComplaintInvestigatorForm(forms.ModelForm):
         exclude = ["created_at", "created_by"]
         widgets = {
             "complaint": forms.HiddenInput(),
+            "investigator": forms.Select(attrs={"onchange": "this.form.submit()"}),
         }
