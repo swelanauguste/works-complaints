@@ -19,22 +19,22 @@ class Command(BaseCommand):
                 try:
                     # Create the zone object
                     zone, created = Zone.objects.get_or_create(
-                        name=row["ZONE"].lower().strip(),
-                        defaults={"district": row["DISTRICT"].lower().strip()},
+                        name=row["zone"].lower().strip(),
+                        defaults={"district": row["district"].lower().strip()},
                     )
                     if created:
                         self.stdout.write(
-                            self.style.SUCCESS(f"Zone {row['ZONE']} added")
+                            self.style.SUCCESS(f"Zone {row['zone']} added")
                         )
                     else:
                         self.stdout.write(
-                            self.style.WARNING(f"Zone {row['ZONE']} already exists")
+                            self.style.WARNING(f"Zone {row['zone']} already exists")
                         )
 
                 except IntegrityError:
                     self.stdout.write(
                         self.style.ERROR(
-                            f"Failed to add Zone {row['ZONE']} due to a duplicate"
+                            f"Failed to add Zone {row['zone']} due to a duplicate"
                         )
                     )
 
