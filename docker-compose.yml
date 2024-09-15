@@ -1,11 +1,13 @@
 services:
   web:
     build: ./app
-    command: python manage.py runserver 0.0.0.0:8000
+    # command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn cf.wsgi:application --bind 0.0.0.0:8000 --reload
     volumes:
       - ./app/:/usr/src/app/
       - static_volume:/home/app/web/staticfiles
-
+    env_file:
+      - ./.env
     ports:
       - 8000:8000
 

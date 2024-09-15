@@ -5,6 +5,8 @@ django-after-response==0.2.2
 django-crispy-forms==2.3
 django-pwa==2.0.0
 Faker==28.4.1
+gunicorn==23.0.0
+packaging==24.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 six==1.16.0

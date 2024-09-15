@@ -113,6 +113,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+
+
 directories = ["templates", "static", "debug", "static/css", "static/images"]
 
 for directory in directories:
@@ -186,7 +188,6 @@ else:
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     # EMAIL_USE_SSL = False
-
 
     # Logging settings
     LOGGING = {
