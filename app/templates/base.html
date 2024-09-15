@@ -18,6 +18,9 @@
     <link rel="stylesheet"
         href="{% static 'css/montserrat.css' %}">
     <link rel="stylesheet"
+        href="{% static 'css/select2.min.css' %}">
+    <script src="{% static 'js/select2.min.js' %}"></script>
+    <link rel="stylesheet"
         href="{% static 'css/styles.css' %}">
 </head>
 
@@ -27,7 +30,6 @@
     <div class="row">
         <div class="col-lg-2">
             {% include 'side-bar.html' %}
-
         </div>
         <div class="col pb-5">
             {% block content %}
@@ -37,14 +39,16 @@
     </div>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script>
-        $('button[type="submit"]').addClass('btn btn-dark rounded-pill px-5');
-        $('input[type="text"]').addClass('rounded-pill border border-dark');
-        $('input[type="password"]').addClass('rounded-pill border border-dark');
-        $('input[type="email"]').addClass('rounded-pill border border-dark');
-        $('input[type="file"]').addClass('rounded-pill border border-dark');
-        $('select').addClass('form-control rounded-pill border border-dark');
-        $('textarea').addClass('form-control rounded-4 border border-dark');
+        $('button[type="submit"]').addClass('btn btn-sm btn-dark rounded-2 px-5');
+        $('input[type="text"]').addClass('form-control form-control-sm rounded-2 border border-secondary');
+        $('input[type="password"]').addClass('rounded-2');
+        $('input[type="email"]').addClass('form-control form-control-sm rounded-2 border border-secondary');
+        $('input[type="file"]').addClass('rounded-2');
+        $('select').addClass('form-control form-control-sm rounded-2 border border-secondary');
+        $('textarea').addClass('form-control form-control-sm rounded-2 border border-secondary');
         $('a').addClass('text-decoration-none text-dark');
+        $('#filter-zones').select2();
+        $('.select').select2();
     </script>
     <script src="{% static 'js/popper.min.js' %}"></script>
 

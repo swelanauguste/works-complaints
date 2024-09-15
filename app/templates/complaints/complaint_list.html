@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% load humanize %}
 
 
 {% block content %}
 <h1>Complaints</h1>
-<p class="text-end me-lg-3"><a href="{% url 'create' %}">Add</a></p>
+<p class="text-end me-lg-3"><a href="{% url 'create' %}">
+  <img style="height: 3rem;" src="{% static 'icons/add.svg' %}" alt="">  
+</a></p>
 <form method="GET" action="{% url 'list' %}">
     <div class="col-lg-4 mx-auto">
         <input class="w-100 form-control" type="text" name="search" value="{{ search_query }}" placeholder="Search complaints...">
@@ -14,7 +16,7 @@
     <div class="col-lg-4 mx-auto">
         <div class="row">
             <div class="col-lg-6 mb-2 mb-lg-0">
-                <select name="zone" onchange="this.form.submit()">
+                <select id="filter-zones" name="zone" onchange="this.form.submit()">
                     <option value="">All Zones</option>
                     {% for zone in zones %}
                     <option value="{{ zone.id }}" {% if zone.id|stringformat:"s" == zone_filter %}selected{% endif %}>{{ zone }}</option>
@@ -76,11 +78,11 @@
                 <td><a href="{% url 'detail' ob.slug %}">{{ob.zone|upper}}</a></td>
                 <td><a href="{% url 'detail' ob.slug %}">{{ob.address|title}}</a></td>
                 <td><a href="{% url 'detail' ob.slug %}">{{ob.phone}}</a></td>
-                <td><a href="{% url 'detail' ob.slug %}">{{ob.created_at}}</a></td>
+                <td><a href="{% url 'detail' ob.slug %}">{{ob.created_at}}({{ob.created_at|naturaltime}})</a></td>
             </tr>
             {% empty %}
             <tr>
-                <td>No complaints.</td>
+                <td class="text-center" colspan="7">No complaints</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -16,19 +16,22 @@
             <hr>
             <!-- <p>Status/Priority: {{ticket.status|title}}/{{ticket.priority|title}}</p> -->
             <p>Investigating officer:
-                    <a href="">{{ complaint_investigator.investigator|default:"-"|upper }}</a>
+                <a href="">
+                    {{investigator.investigator|default:"-"|upper}}</a>
             </p>
         </div>
         <div class="col p-lg-5 m-4">
             <h1>Investigating officer</h1>
-            <p>
-            <form action=""
+            <hr>
+            <form class="col-lg-8 border p-5 rounded-4 shadow mx-auto"
+                action=""
                 method="post">
                 {% csrf_token %}
                 {{ci_form|crispy}}
-                <button type="submit">Submit</button>
+                <div class="d-grid">
+                    <button type="submit">Submit</button>
+                </div>
             </form>
-            </p>
         </div>
     </div>
 

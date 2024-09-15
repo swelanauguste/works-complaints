@@ -9,7 +9,6 @@ from django.views.generic.edit import FormMixin
 from .forms import ComplaintForm, ComplaintInvestigatorForm
 from .models import Complaint, ComplaintInvestigator, Zone
 
-
 @login_required
 def complaint_list(request):
     # Get all complaints
@@ -23,6 +22,7 @@ def complaint_list(request):
             | Q(email__icontains=search_query)
             | Q(address__icontains=search_query)
             | Q(complaint__icontains=search_query)
+            | Q(phone__icontains=search_query)
         )
 
     # Filtering by Foreign Keys (Zone and Category in this case)
@@ -86,7 +86,7 @@ def complaint_detail(request, slug):
     context = {
         "object": complaint,
         "ci_form": form,
-        "complaint_investigator": complaint_investigator,
+        "investigator": complaint_investigator,
     }
 
     return render(request, "complaints/complaint_detail.html", context)

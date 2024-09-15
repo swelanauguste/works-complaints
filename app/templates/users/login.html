@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="col-lg-4 p-5 shadow rounded-4">
+<div class="col-lg-3 p-5 shadow rounded-4">
     <h1>Login</h1>
     <hr>
     <form action=""
@@ -11,7 +11,9 @@
         {% csrf_token %}
         {{form|crispy}}
         <br>
-        <button type="submit">Login</button>
+        <div class="d-grid">
+            <button type="submit">Login</button>
+        </div>
     </form>
 </div>
 {% endblock content %}

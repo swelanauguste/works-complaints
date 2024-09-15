@@ -18,3 +18,6 @@ class ComplaintInvestigatorForm(forms.ModelForm):
         model = ComplaintInvestigator
         fields = "__all__"
         exclude = ["created_at", "created_by"]
+        widgets = {
+            "complaint": forms.HiddenInput(),
+        }
