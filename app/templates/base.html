@@ -36,7 +36,8 @@
     </div>
     {% include 'bottom.html' %}
 
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+
     <script>
         var commonClasses = 'form-control form-control-sm rounded-2 border border-secondary'
         $('button[type="submit"]').addClass('btn btn-dark rounded-2 px-5');
@@ -49,10 +50,11 @@
         $('a').addClass('text-dark');
         $('.page').addClass('badge text-bg-dark text-white text-decoration-none');
         $('#filter-zones').select2();
-        $('.select').select2();
+        $('#id_investigators').select2();
+        $('#id_zone').select2();
     </script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/popper.min.js' %}"></script>
-
 </body>
 
 </html>

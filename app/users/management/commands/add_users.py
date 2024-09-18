@@ -1,0 +1,93 @@
+import csv
+
+from complaints.models import Zone
+from django.core.management.base import BaseCommand
+
+from ...models import User
+
+
+class Command(BaseCommand):
+    help = "Import zones and users from a CSV file, creating usernames and passwords."
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "csv_file", type=str, help="The path to the CSV file to be imported"
+        )
+
+    def handle(self, *args, **kwargs):
+        csv_file = kwargs["csv_file"]
+
+        try:
+            with open(csv_file, mode="r") as file:
+                reader = csv.reader(file)
+                # Skip the header if it exists
+                next(reader, None)
+
+                for row in reader:
+                    zone, email = row[0], row[1]
+
+                    # Split email to get first and last name
+                    first_name, last_name = self.split_email(email)
+
+                    # Add or get the zone
+                    zone, created = Zone.objects.get_or_create(zone=zone)
+                    if created:
+                        self.stdout.write(self.style.SUCCESS(f"Zone {zone} created."))
+                    else:
+                        self.stdout.write(
+                            self.style.WARNING(f"Zone {zone} already exists. Skipping.")
+                        )
+
+                    # Generate username and password
+                    username = self.generate_username(email)
+                    password = "Password2024"
+
+                    # Add or update the user
+                    user, created = User.objects.get_or_create(
+                        email=email,
+                        defaults={
+                            "username": username,
+                            "first_name": first_name,
+                            "last_name": last_name,
+                        },
+                    )
+
+                    if created:
+                        # Set the password if the user was created
+                        user.set_password(password)
+                        user.save()
+                        self.stdout.write(
+                            self.style.SUCCESS(
+                                f"User {email} created with username {username} and password {password}."
+                            )
+                        )
+                    else:
+                        self.stdout.write(
+                            self.style.WARNING(
+                                f"User {email} already exists. Skipping."
+                            )
+                        )
+
+        except FileNotFoundError:
+            self.stdout.write(self.style.ERROR(f"File {csv_file} does not exist."))
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"Error processing file: {e}"))
+
+    def split_email(self, email):
+        """Split email to extract first and last names."""
+        first_part = email.split("@")[0]
+        parts = first_part.split(".")
+
+        if len(parts) >= 2:
+            first_name = parts[0].capitalize()
+            last_name = parts[1].capitalize()
+        else:
+            first_name = parts[0].capitalize()
+            last_name = ""
+
+        return first_name, last_name
+
+    def generate_username(self, email):
+        """Generate a username from the email."""
+        username = email.split("@")[0]
+        return username

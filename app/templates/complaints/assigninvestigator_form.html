@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+
+{% load crispy_forms_tags %}
+{% block content %}
+<form class="col-lg-4 mx-auto"
+    action=""
+    method="post">
+    {{form|crispy}}
+</form>
+{% endblock content %}

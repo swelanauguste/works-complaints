@@ -2,12 +2,150 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView
-from django.views.generic.edit import FormMixin
 
-from .forms import ComplaintForm, ComplaintInvestigatorForm
-from .models import Complaint, ComplaintInvestigator, Zone
+from .forms import (
+    AcknowledgementLetterForm,
+    AssignInvestigatorForm,
+    ChangePriorityForm,
+    ChangeStatusForm,
+    ComplaintForm,
+    ComplaintPhotoForm,
+)
+from .models import (
+    AcknowledgementLetter,
+    AssignInvestigator,
+    ChangePriority,
+    ChangeStatus,
+    Complaint,
+    ComplaintPhoto,
+    Zone,
+)
+
+
+@login_required
+def change_status(request, slug):
+    # Get the specific complaint
+    complaint = get_object_or_404(Complaint, slug=slug)
+
+    if request.method == "POST":
+        form = ChangeStatusForm(request.POST)
+        if form.is_valid():
+            status_change = form.save(commit=False)
+            status_change.complaint = complaint
+            status_change.created_by = request.user
+            status_change.save()
+
+            # Redirect back to the complaint detail page or the page you want
+            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+
+    # No need to handle the 'GET' request or render a template,
+    # since the form is being posted and handled via another page.
+    return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+
+
+@login_required
+def change_priority(request, slug):
+    # Get the specific complaint
+    complaint = get_object_or_404(Complaint, slug=slug)
+
+    if request.method == "POST":
+        form = ChangePriorityForm(request.POST)
+        if form.is_valid():
+            priority_change = form.save(commit=False)
+            priority_change.complaint = complaint
+            priority_change.created_by = request.user
+            priority_change.save()
+
+            # Redirect back to the complaint detail page or the page you want
+            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+
+    # No need to handle the 'GET' request or render a template,
+    # since the form is being posted and handled via another page.
+    return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+
+
+@login_required
+def add_acknowledgement_letter(request, slug):
+    # Get the specific complaint
+    complaint = get_object_or_404(Complaint, slug=slug)
+
+    if request.method == "POST":
+        form = AcknowledgementLetterForm(request.POST, request.FILES)
+        if form.is_valid():
+            letter = form.save(commit=False)
+            letter.complaint = complaint
+            letter.created_by = request.user  # Ensure created_by is assigned
+            letter.save()
+            # Redirect to the complaint detail page
+            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+    else:
+        form = AcknowledgementLetterForm(initial={"complaint": complaint})
+
+    context = {
+        "form": form,
+        "complaint": complaint,
+    }
+
+    return render(request, "complaints/acknowledgement_letter_form.html", context)
+
+
+@login_required
+def assign_investigators(request, slug):
+    # Get the specific complaint
+    complaint = get_object_or_404(Complaint, slug=slug)
+
+    if request.method == "POST":
+        form = AssignInvestigatorForm(request.POST)
+        if form.is_valid():
+            assign = form.save(commit=False)
+            assign.complaint = complaint
+            assign.created_by = request.user  # Ensure created_by is assigned
+            assign.save()
+            form.save_m2m()
+            # Redirect to the complaint detail page
+            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+    else:
+        form = AssignInvestigatorForm(initial={"complaint": complaint})
+
+    context = {
+        "form": form,
+        "complaint": complaint,
+    }
+
+    return render(request, "complaints/assign_investigator_form.html", context)
+
+
+@login_required
+def create_complaint_photo(request, slug):
+    # Get the specific complaint
+    complaint = get_object_or_404(Complaint, slug=slug)
+
+    if request.method == "POST":
+        form = ComplaintPhotoForm(request.POST, request.FILES)
+        files = request.FILES.getlist("photos")  # Get the list of uploaded files
+        if form.is_valid():
+            comment = form.cleaned_data["comment"]
+            for file in files:
+                # Create a new ComplaintPhoto for each file
+                photo_instance = ComplaintPhoto(
+                    complaint=complaint,
+                    comment=comment,
+                    photo=file,  # Save each file individually
+                )
+                photo_instance.save()
+            # Redirect to the complaint detail page after saving all photos
+            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+    else:
+        form = ComplaintPhotoForm()
+
+    context = {
+        "form": form,
+        "complaint": complaint,
+    }
+
+    return render(request, "complaints/complaint_photo_form.html", context)
 
 
 @login_required
@@ -24,6 +162,7 @@ def complaint_list(request):
             | Q(address__icontains=search_query)
             | Q(complaint__icontains=search_query)
             | Q(phone__icontains=search_query)
+            | Q(ref__iexact=search_query)
         )
 
     # Filtering by Foreign Keys (Zone and Category in this case)
@@ -62,32 +201,39 @@ def complaint_list(request):
 
 @login_required
 def complaint_detail(request, slug):
-    # Get the specific complaint
+    # Get the specific complaint using the slug
     complaint = get_object_or_404(Complaint, slug=slug)
-    complaint_investigator = ComplaintInvestigator.objects.filter(
-        complaint=complaint
-    ).first()
-
-    if request.method == "POST":
-        # Process form submission
-        form = ComplaintInvestigatorForm(request.POST)
-        if form.is_valid():
-            # Assign the current complaint and created_by to the form
-            investigator = form.save(commit=False)
-            investigator.complaint = complaint
-            investigator.created_by = request.user  # Assuming the user is logged in
-            investigator.save()
-
-            # Redirect to the current complaint's detail page after successful submission
-            return redirect(reverse("detail", kwargs={"slug": slug}))
-    else:
-        # Display the form with the current complaint pre-filled
-        form = ComplaintInvestigatorForm(initial={"complaint": complaint})
+    assign_investigator = AssignInvestigator.objects.filter(complaint=complaint).first()
+    try:
+        status = ChangeStatus.objects.filter(complaint=complaint).first().status
+        priority = ChangePriority.objects.filter(complaint=complaint).first().priority
+    except:
+        status = 'is_open'
+        priority = 'low'
+    # Fetch related data if necessary
+    photos = complaint.photos.all()  # Assuming Complaint has a related Photo model
+    letters = (
+        complaint.letters.all()
+    )  # Assuming Complaint has related AcknowledgementLetter
+    assignments = (
+        complaint.assigninvestigator_set.all()
+    )  # Assuming Complaint has related AssignInvestigator
+    
+    change_status_form = ChangeStatusForm(
+        initial={"complaint": complaint, "status": status}
+    )
+    change_priority_form = ChangePriorityForm(
+        initial={"complaint": complaint, "priority": priority}
+    )
 
     context = {
-        "object": complaint,
-        "ci_form": form,
-        "investigator": complaint_investigator,
+        "complaint": complaint,
+        "photos": photos,
+        "letters": letters,
+        "assignments": assignments,
+        "assign_investigator": assign_investigator,
+        "change_status_form": change_status_form,
+        "change_priority_form": change_priority_form,
     }
 
     return render(request, "complaints/complaint_detail.html", context)
@@ -111,7 +257,13 @@ def complaint_create(request):
     return render(request, "complaints/complaint_form.html", context)
 
 
-class ComplaintInvestigatorCreateView(CreateView):
-    model = ComplaintInvestigator
-    fields = "__all__"
+class ComplaintPhotoCreateView(CreateView):
+    model = ComplaintPhoto
+    form_class = ComplaintPhotoForm
     # success_url = "/complaints/success"
+
+
+# class ComplaintInvestigatorCreateView(CreateView):
+#     model = ComplaintInvestigator
+#     fields = "__all__"
+#     # success_url = "/complaints/success"

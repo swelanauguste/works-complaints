@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<form class="col-lg-3 mx-auto m-5"
+    action=""
+    enctype="multipart/form-data"
+    method="post">
+    {% csrf_token %}
+    {{form|crispy}}
+    <div class="d-grid">
+        <button type="submit">Attach letter</button>
+    </div>
+</form>
+{% endblock content %}

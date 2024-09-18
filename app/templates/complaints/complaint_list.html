@@ -6,21 +6,19 @@
 {% block content %}
 <div class="py-5">
 <form method="GET" action="{% url 'list' %}">
-    <div class="col-lg-8 mx-auto">
-       <div class="row"> 
-            <div class="col-lg-6 px-lg-0">
+            <div class="col-lg-6 mx-auto px-lg-0">
                 <input class="form-control" type="text" name="search" value="{{ search_query }}" placeholder="Search complaints...">
             </div>
-            <div class="col-lg-3 col-12 mt-2 mt-lg-0">
-                        <select id="filter-zones" name="zone" onchange="this.form.submit()">
-                        <option value="">All Zones</option>
-                        {% for zone in zones %}
-                        <option value="{{ zone.id }}" {% if zone.id|stringformat:"s" == zone_filter %}selected{% endif %}>{{ zone }}</option>
-                        {% endfor %}
-                        </select>
-                    </div>
-        </div>
-    </div>
+          <br>
+            <div class="col-lg-3 mx-auto mt-2 mt-lg-0">
+                <select id="filter-zones" name="zone" onchange="this.form.submit()">
+                    <option value="">All Zones</option>
+                    {% for zone in zones %}
+                    <option value="{{ zone.id }}" {% if zone.id|stringformat:"s" == zone_filter %}selected{% endif %}>{{ zone }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
             <!-- <div class="col">
                 <select name="category">
                     <option value="">All Categories</option>
@@ -65,6 +63,7 @@
         <thead>
             <tr>
                 <th scope="col">#</th>
+                <th scope="col">Ref#</th>
                 <th scope="col">Complaints</th>
             </tr>
         </thead>
@@ -72,6 +71,7 @@
             {% for ob in object_list %}
             <tr>
                 <th scope="row">{{forloop.counter}}</th>
+                <td><a href="{% url 'detail' ob.slug %}">{{ob.ref|upper}}</a></td>
                 <td><a class="text-decoration-none" href="{% url 'detail' ob.slug %}">{{ob.zone}} | 
                     {{ob.address|title}} | 
                     <a href="tel:{{ob.phone}}">{{ob.phone}}</a></a> | {{ob.created_at|naturaltime}}</td>

@@ -5,36 +5,95 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="row">
-    <div class="col container p-lg-5">
-        <h1>{{object.name|title}}, {{object.address|title}},
-           <a href="tel:{{object.phone}}">{{object.phone}}</a></h1>
+<div class="container my-5">
+    <h1>{{complaint|upper}}</h1>
+    <hr>
+    <a class="btn btn-dark text-white"
+        href="{% url 'create-complaint-photo' complaint.slug %}">Add
+        Photos</a>
+    {% if request.user.role == "engineer" or request.user.role == "admin" %}
+    <a class="btn btn-dark text-white"
+        href="{% url 'assign-investigators' complaint.slug %}">Assign</a>
+    <a class="btn btn-dark text-white mt-2 mt-lg-0"
+        href="{% url 'add-acknowledgement-letter' complaint.slug %}">Acknowledgment
+        letter</a>
 
-        <hr>
-        <p>{{object.complaint|capfirst }}</p>
-        <p>{{object.created_at}}({{object.created_at|naturaltime}})</p>
-        <hr>
-        <!-- <p>Status/Priority: {{ticket.status|title}}/{{ticket.priority|title}}</p> -->
+    <br><br>
+    <div class="row">
+        <div style="height: fit-content;"
+            class="col-lg-3 p-5 border shadow rounded-5 me-lg-2 mb-2 mb-lg-0">
+            <form action="{% url 'change-status' complaint.slug %}"
+                method="post">
+                {% csrf_token %}
+                {{change_status_form|crispy}}
+            </form>
+            <form action="{% url 'change-priority' complaint.slug %}"
+                method="post">
+                {% csrf_token %}
+                {{change_priority_form|crispy}}
+            </form>
 
-        {% if investigator %}
-        <p>Investigating officer:
-            <a href="">
-                {{investigator.investigator|default:""|upper}}</a>
-        </p>
+        </div>
         {% endif %}
+<br><br>
+        <div class="col-lg-8 border shadow rounded-5 p-5">
+            <p title="zone"><strong>Zone: </strong>{{complaint.zone|capfirst }}
+            </p>
+            <p title="address"><strong>Address: </strong>
+                {{complaint.address|capfirst }}</p>
+            <p title="phone"><strong>Phone: </strong><a
+                    href="tel:{{complaint.phone }}">
+                    {{complaint.phone }}</a></p>
+            <p title="email"><strong>email: </strong><a
+                    href="mailto:{{complaint.email }}">
+                    {{complaint.email|default:"email" }}</a></p>
+
+            <p title="date"><strong>Date:
+                </strong>{{complaint.date}}({{complaint.created_at|naturaltime}})
+            </p>
+            {% if complaint.form %}
+            <p title="Complaints form"><strong>Form: </strong><a
+                    target="_blank"
+                    href="{{complaint.form.url}}">{{complaint.form|lower}}</a>
+            </p>
+            {% endif %}
+            {% if complaint.letters.first.letter %}
+            <p title="acknowledgment letter">
+                <strong>Acknowledgment Letter: </strong>
+                <a target="_blank"
+                    href="{{complaint.letters.first.letter.url }}">
+                    {{complaint.letters.first.filename|lower }}</a>
+            </p>
+
+            {% endif %}
+            {% if assign_investigator %}
+            <strong>investigators:</strong>
+            <ul>
+                {% for ob in assign_investigator.investigators.all %}
+                <li><a href="">{{ob}}</a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <hr>
+            <p title="complaint"><strong>Complaint:
+                </strong>{{complaint.complaint|capfirst }}</p>
+        </div>
     </div>
-    {% if request.user.role == "agent" or request.user.role == "admin" %}
-    <div class="col-lg-3 container p-lg-5">
-        <form action=""
-            method="post">
-            {% csrf_token %}
-            {{ci_form|crispy}}
-            <div class="d-grid">
-                <button type="submit">Assign</button>
-            </div>
-        </form>
+    {% if complaint.photos.all %}
+    <br>
+    <div class="col-lg-8 shadow p-5 rounded-5">
+        <p class="text-center">
+            {% for img in complaint.photos.all %}
+            <a target="_blank"
+                href="{{img.photo.url}}"><img class="mb-1"
+                    height="300"
+                    src="{{img.photo.url}}"
+                    alt="">
+            </a>
+            {% endfor %}
+        </p>
     </div>
     {% endif %}
 </div>
-</div>
+
 {% endblock content %}

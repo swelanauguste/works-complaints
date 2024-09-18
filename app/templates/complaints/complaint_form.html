@@ -4,14 +4,16 @@
 
 
 {% block content %}
-<form class="col-lg-4"
-    method="post">
-    <h1 class="display-4">Create</h1>
 
-    {% csrf_token %}
+<form class="col-lg-4 p-5 m-5 shadow rounded-5 border mx-auto"
+  method="post">
+  <h1 class="display-4">Create</h1>
+
+  {% csrf_token %}
   {{form|crispy}}
-    <div class="d-grid">
-        <button type="submit">Submit</button><br><br>
-    </div>
+  <div class="d-grid">
+    <button type="submit">Submit</button><br><br>
+  </div>
+  <a href="/">Cancel</a>
 </form>
 {% endblock content %}
