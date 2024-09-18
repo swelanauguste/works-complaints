@@ -176,7 +176,7 @@ ADMINS = [
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-DEFAULT_FROM_EMAIL = "ict.infrastructure@govt.lc"
+DEFAULT_FROM_EMAIL = "complaints.infrastructure@gmail.com"
 
 
 if DEBUG:

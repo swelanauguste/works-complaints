@@ -1,13 +1,12 @@
 import csv
 
-from complaints.models import Zone
-from django.core.management.base import BaseCommand
-
 from ...models import User
+from django.core.management.base import BaseCommand
+from complaints.models import Zone
 
 
 class Command(BaseCommand):
-    help = "Import zones and users from a CSV file, creating usernames and passwords."
+    help = "Import zones, users, and roles from a CSV file, creating usernames, passwords, and assigning roles."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -24,7 +23,16 @@ class Command(BaseCommand):
                 next(reader, None)
 
                 for row in reader:
-                    zone, email = row[0], row[1]
+                    zone, role, email = row[0].strip().lower(), row[1].strip().lower(), row[2].strip().lower()
+
+                    # Validate role
+                    if role not in ["technician", "engineering assistant", "engineer", "admin"]:
+                        self.stdout.write(
+                            self.style.ERROR(
+                                f"Invalid role '{role}' for {email}. Skipping."
+                            )
+                        )
+                        continue
 
                     # Split email to get first and last name
                     first_name, last_name = self.split_email(email)
@@ -32,10 +40,14 @@ class Command(BaseCommand):
                     # Add or get the zone
                     zone, created = Zone.objects.get_or_create(zone=zone)
                     if created:
-                        self.stdout.write(self.style.SUCCESS(f"Zone {zone} created."))
+                        self.stdout.write(
+                            self.style.SUCCESS(f"Zone {zone} created.")
+                        )
                     else:
                         self.stdout.write(
-                            self.style.WARNING(f"Zone {zone} already exists. Skipping.")
+                            self.style.WARNING(
+                                f"Zone {zone} already exists. Skipping."
+                            )
                         )
 
                     # Generate username and password
@@ -49,6 +61,8 @@ class Command(BaseCommand):
                             "username": username,
                             "first_name": first_name,
                             "last_name": last_name,
+                            "zone": zone,
+                            "role": role,  # Assign the role
                         },
                     )
 
@@ -58,7 +72,7 @@ class Command(BaseCommand):
                         user.save()
                         self.stdout.write(
                             self.style.SUCCESS(
-                                f"User {email} created with username {username} and password {password}."
+                                f"User {email} created with username {username}, password {password}, and role {role}."
                             )
                         )
                     else:
@@ -91,3 +105,8 @@ class Command(BaseCommand):
         """Generate a username from the email."""
         username = email.split("@")[0]
         return username
+
+    def generate_password(self, length=8):
+        """Generate a random password."""
+        characters = string.ascii_letters + string.digits
+        return "".join(random.choice(characters) for i in range(length))

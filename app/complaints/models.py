@@ -5,22 +5,9 @@ from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.text import slugify
-from users.models import User
+from users.models import User, Zone
 
 from .utils import generate_short_id
-
-
-class Zone(models.Model):
-    district = models.CharField(max_length=100, blank=True)
-    zone = models.CharField(max_length=8, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    
-
-    def __str__(self):
-        if self.district:
-            return f"{self.district.upper()} | {self.zone.upper()}"
-        return self.zone.upper()
 
 
 class Category(models.Model):
@@ -35,7 +22,9 @@ class Category(models.Model):
 
 
 class Complaint(models.Model):
-    ref = models.CharField(max_length=10, unique=True, default=generate_short_id, editable=False)
+    ref = models.CharField(
+        max_length=10, unique=True, default=generate_short_id, editable=False
+    )
     phone = models.CharField(max_length=20)
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
@@ -52,7 +41,7 @@ class Complaint(models.Model):
     )
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
     complaint = models.TextField(blank=True, null=True)
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(
@@ -112,10 +101,11 @@ class AcknowledgementLetter(models.Model):
         return f"{self.complaint}- {self.created_by}"
 
 
-class AssignInvestigator(models.Model):
+class AssignEngineer(models.Model):
     complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE, null=True)
-    investigators = models.ManyToManyField(User, related_name="investigators")
-    comment = models.TextField(blank=True)
+    engineer = models.ForeignKey(
+        User, on_delete=models.SET_NULL, related_name="engineers", null=True
+    )
     created_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -129,7 +119,28 @@ class AssignInvestigator(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.complaint.ref.upper()} assigned to {self.investigators.first()} by {self.created_by}"
+        return f"{self.complaint.ref.upper()} assigned to {self.engineer} by {self.created_by}"
+
+
+class AssignTechnician(models.Model):
+    complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE, null=True)
+    technician = models.ForeignKey(
+        User, on_delete=models.SET_NULL, related_name="technicians", null=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.complaint.ref.upper()} assigned to {self.technician} by {self.created_by}"
 
 
 class ChangeStatus(models.Model):
@@ -145,7 +156,7 @@ class ChangeStatus(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
-        verbose_name_plural = "Change Statuses"
+        verbose_name_plural = "change statuses"
 
     def __str__(self):
         return f"{self.complaint} {self.status}"
@@ -164,7 +175,7 @@ class ChangePriority(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
-        verbose_name_plural = "Change Statuses"
+        verbose_name_plural = "change priorities"
 
     def __str__(self):
         return f"{self.complaint} {self.status}"

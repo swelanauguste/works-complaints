@@ -5,23 +5,32 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container my-5">
+<div class="container-fluid">
     <h1>{{complaint|upper}}</h1>
     <hr>
     <a class="btn btn-dark text-white"
         href="{% url 'create-complaint-photo' complaint.slug %}">Add
         Photos</a>
-    {% if request.user.role == "engineer" or request.user.role == "admin" %}
-    <a class="btn btn-dark text-white"
-        href="{% url 'assign-investigators' complaint.slug %}">Assign</a>
+    {% if request.user.role == "admin" %}
+
     <a class="btn btn-dark text-white mt-2 mt-lg-0"
         href="{% url 'add-acknowledgement-letter' complaint.slug %}">Acknowledgment
         letter</a>
-
+    {% endif %}
+    {% if request.user.role == "engineer" %}
+    <a class="btn btn-secondary text-white mt-lg-0"
+        href="{% url 'add-acknowledgement-letter' complaint.slug %}">Assign
+        Technician
+    </a>
+    <a class="btn btn-success text-white mt-2 mt-lg-0 ms-lg-1"
+        href="{% url 'add-acknowledgement-letter' complaint.slug %}">Upload
+        Report
+    </a>
+    {% endif %}
     <br><br>
     <div class="row">
-        <div style="height: fit-content;"
-            class="col-lg-3 p-5 border shadow rounded-5 me-lg-2 mb-2 mb-lg-0">
+        <div class="col-lg-3 mx-auto p-5 border shadow rounded-5 mb-lg-0 mb-2">
+            {% if request.user.role == "engineer" %}
             <form action="{% url 'change-status' complaint.slug %}"
                 method="post">
                 {% csrf_token %}
@@ -33,10 +42,24 @@
                 {{change_priority_form|crispy}}
             </form>
 
+            <form action="{% url 'assign-technician' complaint.slug %}"
+                method="post">
+                {% csrf_token %}
+                {{assign_technician_form|crispy}}
+            </form>
+            <hr>
+            {% endif %}
+
+            {% if request.user.role == "admin" %}
+            <form action="{% url 'assign-engineer' complaint.slug %}"
+                method="post">
+                {% csrf_token %}
+                {{assign_engineer_form|crispy}}
+            </form>
+            {% endif %}
         </div>
-        {% endif %}
-<br><br>
-        <div class="col-lg-8 border shadow rounded-5 p-5">
+        <br><br>
+        <div class="col-lg-8 mx-auto border shadow rounded-5 p-5">
             <p title="zone"><strong>Zone: </strong>{{complaint.zone|capfirst }}
             </p>
             <p title="address"><strong>Address: </strong>
@@ -46,7 +69,7 @@
                     {{complaint.phone }}</a></p>
             <p title="email"><strong>email: </strong><a
                     href="mailto:{{complaint.email }}">
-                    {{complaint.email|default:"email" }}</a></p>
+                    {{complaint.email|default:"no email" }}</a></p>
 
             <p title="date"><strong>Date:
                 </strong>{{complaint.date}}({{complaint.created_at|naturaltime}})
@@ -66,14 +89,11 @@
             </p>
 
             {% endif %}
-            {% if assign_investigator %}
-            <strong>investigators:</strong>
-            <ul>
-                {% for ob in assign_investigator.investigators.all %}
-                <li><a href="">{{ob}}</a></li>
-                {% endfor %}
-            </ul>
-            {% endif %}
+
+            <p> <strong>Engineer:</strong>
+                <a class="badge bg-success text-white"
+                    href="">{{assigned_engineer.engineer}}</a>
+            </p>
             <hr>
             <p title="complaint"><strong>Complaint:
                 </strong>{{complaint.complaint|capfirst }}</p>

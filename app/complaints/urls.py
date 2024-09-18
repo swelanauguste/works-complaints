@@ -12,9 +12,14 @@ urlpatterns = [
         name="create-complaint-photo",
     ),
     path(
-        "assign-investigators/<slug:slug>/",
-        views.assign_investigators,
-        name="assign-investigators",
+        "assign-technician/<slug:slug>/",
+        views.assign_technician,
+        name="assign-technician",
+    ),
+    path(
+        "assign-engineer/<slug:slug>/",
+        views.assign_engineer,
+        name="assign-engineer",
     ),
     path(
         "add-acknowledgement-letter/<slug:slug>/",

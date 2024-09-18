@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -7,7 +8,8 @@ from django.views.generic import CreateView, DetailView, ListView
 
 from .forms import (
     AcknowledgementLetterForm,
-    AssignInvestigatorForm,
+    AssignEngineerForm,
+    AssignTechnicianForm,
     ChangePriorityForm,
     ChangeStatusForm,
     ComplaintForm,
@@ -15,13 +17,15 @@ from .forms import (
 )
 from .models import (
     AcknowledgementLetter,
-    AssignInvestigator,
+    AssignEngineer,
+    AssignTechnician,
     ChangePriority,
     ChangeStatus,
     Complaint,
     ComplaintPhoto,
     Zone,
 )
+from .utils import send_engineer_assigned_email
 
 
 @login_required
@@ -67,6 +71,45 @@ def change_priority(request, slug):
 
 
 @login_required
+def assign_technician(request, slug):
+    # Get the specific complaint
+    complaint = get_object_or_404(Complaint, slug=slug)
+
+    if request.method == "POST":
+        form = AssignTechnicianForm(request.POST)
+        if form.is_valid():
+            assign = form.save(commit=False)
+            assign.complaint = complaint
+            assign.created_by = request.user  # Ensure created_by is assigned
+            assign.save()
+            # form.save_m2m()
+            # Redirect to the complaint detail page
+            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+    return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+
+
+@login_required
+def assign_engineer(request, slug):
+    # Get the specific complaint
+    complaint = get_object_or_404(Complaint, slug=slug)
+
+    if request.method == "POST":
+        form = AssignEngineerForm(request.POST)
+        if form.is_valid():
+            assign = form.save(commit=False)
+            assign.complaint = complaint
+            assign.created_by = request.user  # Ensure created_by is assigned
+            assign.save()
+            messages.info(request, f"This complaint was assign to {assign.engineer}")
+            send_engineer_assigned_email(assign.engineer, assign.complaint)
+            # messages.info(request, f"An email was sent to {assign.engineer} at {assign.engineer.email}")
+            # form.save_m2m()
+            # Redirect to the complaint detail page
+            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+    return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+
+
+@login_required
 def add_acknowledgement_letter(request, slug):
     # Get the specific complaint
     complaint = get_object_or_404(Complaint, slug=slug)
@@ -89,32 +132,6 @@ def add_acknowledgement_letter(request, slug):
     }
 
     return render(request, "complaints/acknowledgement_letter_form.html", context)
-
-
-@login_required
-def assign_investigators(request, slug):
-    # Get the specific complaint
-    complaint = get_object_or_404(Complaint, slug=slug)
-
-    if request.method == "POST":
-        form = AssignInvestigatorForm(request.POST)
-        if form.is_valid():
-            assign = form.save(commit=False)
-            assign.complaint = complaint
-            assign.created_by = request.user  # Ensure created_by is assigned
-            assign.save()
-            form.save_m2m()
-            # Redirect to the complaint detail page
-            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
-    else:
-        form = AssignInvestigatorForm(initial={"complaint": complaint})
-
-    context = {
-        "form": form,
-        "complaint": complaint,
-    }
-
-    return render(request, "complaints/assign_investigator_form.html", context)
 
 
 @login_required
@@ -203,37 +220,57 @@ def complaint_list(request):
 def complaint_detail(request, slug):
     # Get the specific complaint using the slug
     complaint = get_object_or_404(Complaint, slug=slug)
-    assign_investigator = AssignInvestigator.objects.filter(complaint=complaint).first()
+    # Fetch related data with safe null handling
+    assigned_engineer = None
+    assigned_technician = None
+    status = None
+    priority = None
+
     try:
-        status = ChangeStatus.objects.filter(complaint=complaint).first().status
-        priority = ChangePriority.objects.filter(complaint=complaint).first().priority
-    except:
-        status = 'is_open'
-        priority = 'low'
+        assigned_engineer = AssignEngineer.objects.filter(complaint=complaint).first()
+        assigned_technician = AssignTechnician.objects.filter(
+            complaint=complaint
+        ).first()
+        status = ChangeStatus.objects.filter(complaint=complaint).first()
+        priority = ChangePriority.objects.filter(complaint=complaint).first()
+    except Exception as e:
+        pass
+
+    # Extract the actual engineer and technician from the assignment objects
+    engineer = assigned_engineer.engineer if assigned_engineer else None
+    technician = assigned_technician.technician if assigned_technician else None
+
     # Fetch related data if necessary
     photos = complaint.photos.all()  # Assuming Complaint has a related Photo model
-    letters = (
-        complaint.letters.all()
-    )  # Assuming Complaint has related AcknowledgementLetter
-    assignments = (
-        complaint.assigninvestigator_set.all()
-    )  # Assuming Complaint has related AssignInvestigator
-    
+    letters = complaint.letters.all()
+
+    # Initialize forms with existing data
     change_status_form = ChangeStatusForm(
-        initial={"complaint": complaint, "status": status}
+        initial={"complaint": complaint, "status": status.status if status else None}
     )
     change_priority_form = ChangePriorityForm(
-        initial={"complaint": complaint, "priority": priority}
+        initial={
+            "complaint": complaint,
+            "priority": priority.priority if priority else None,
+        }
+    )
+    assign_engineer_form = AssignEngineerForm(
+        initial={"complaint": complaint, "engineer": engineer}
+    )
+    assign_technician_form = AssignTechnicianForm(
+        initial={"complaint": complaint, "technician": technician}
     )
 
     context = {
         "complaint": complaint,
         "photos": photos,
         "letters": letters,
-        "assignments": assignments,
-        "assign_investigator": assign_investigator,
+        "assigned_engineer": assigned_engineer,
+        "assigned_technician": assigned_technician,
         "change_status_form": change_status_form,
         "change_priority_form": change_priority_form,
+        "assign_engineer_form": assign_engineer_form,
+        "assign_technician_form": assign_technician_form,
     }
 
     return render(request, "complaints/complaint_detail.html", context)

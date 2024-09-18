@@ -2,7 +2,8 @@ from django import forms
 
 from .models import (
     AcknowledgementLetter,
-    AssignInvestigator,
+    AssignEngineer,
+    AssignTechnician,
     ChangePriority,
     ChangeStatus,
     Complaint,
@@ -37,21 +38,40 @@ class ChangeStatusForm(forms.ModelForm):
         }
 
 
-class AssignInvestigatorForm(forms.ModelForm):
+class AssignTechnicianForm(forms.ModelForm):
     class Meta:
-        model = AssignInvestigator
-        fields = ["investigators", "comment"]
+        model = AssignTechnician
+        fields = [
+            "technician",
+        ]
         widgets = {
             "complaint": forms.HiddenInput(),
-            "comment": forms.Textarea(attrs={"rows": 5}),
+            "technician": forms.Select(attrs={"onchange": "this.form.submit();"}),
         }
 
     def __init__(self, *args, **kwargs):
-        super(AssignInvestigatorForm, self).__init__(*args, **kwargs)
-        # Filter users based on roles 'admin', 'investigator', 'engineer'
-        self.fields["investigators"].queryset = User.objects.filter(
-            role__in=["admin", "engineer"]
+        super(AssignTechnicianForm, self).__init__(*args, **kwargs)
+        # Filter users based on roles 'technician'
+        self.fields["technician"].queryset = User.objects.filter(
+            role__in=["technician"]
         )
+
+
+class AssignEngineerForm(forms.ModelForm):
+    class Meta:
+        model = AssignEngineer
+        fields = [
+            "engineer",
+        ]
+        widgets = {
+            "complaint": forms.HiddenInput(),
+            "engineer": forms.Select(attrs={"onchange": "this.form.submit();"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(AssignEngineerForm, self).__init__(*args, **kwargs)
+        # Filter users based on roles 'admin', 'investigator', 'engineer'
+        self.fields["engineer"].queryset = User.objects.filter(role__in=["engineer"])
 
 
 class AcknowledgementLetterForm(forms.ModelForm):
@@ -102,7 +122,7 @@ class ComplaintForm(forms.ModelForm):
         exclude = ["slug", "created_at", "category", "created_by", "updated_by"]
         widgets = {
             "complaint": forms.Textarea(attrs={"rows": 5}),
-            "date": forms.DateInput(attrs={"type": 'date'}),
+            "date": forms.DateInput(attrs={"type": "date"}),
         }
 
 
