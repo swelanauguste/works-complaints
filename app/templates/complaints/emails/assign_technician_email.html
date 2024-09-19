@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+    <title>New complaint assigned</title>
+</head>
+
+<body>
+    <h2>New Complaint: {{ complaint.ref|upper }} assigned</h2>
+    <p>{{ technician }},</p>
+    <p>A new complaint has been assigned to you. Here are the details:</p>
+
+    <p><strong>Complaint ref#:</strong> {{ complaint.ref }}</p>
+    <p><strong>Complaint:</strong> {{ complaint.complaint }}</p>
+
+    <p>You can view the details of the complaint by clicking on the following
+        link:</p>
+
+    <p><a href="{{full_url}}">View complaint</a></p>
+
+    <p>Thank you for using our complaints system.</p>
+
+    <p>Best regards,
+        <br>Your Support Team
+    </p>
+</body>
+
+</html>

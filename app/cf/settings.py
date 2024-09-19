@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "after_response",
     "users",
     "complaints",
+    "reports",
 ]
 
 MIDDLEWARE = [

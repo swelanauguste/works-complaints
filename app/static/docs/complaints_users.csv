@@ -1,26 +1,3 @@
-zone,role,email
-7,technician,Millenia.mathurin@govt.lc 
-7,technician,darnal.reynold@govt.lc
-7,engineering assistant,sergis@gosl.gov.lc
-7,engineer ,shaquill.felicien@govt.lc
-1,technician,kimma.hyacinth@govt.lc
-1,technician,ricardo.joseph@govt.lc
-1,engineering assistant,tboyce@gosl.govt.lc
-1,engineer ,lglasgow@gosl.govt.lc 
-8A,technician,marvin.leonce@govt.lc
-8A,technician,marquita.auguste@govt.lc
-8A,engineering assistant,jdavid@gosl.govt.lc
-8A,engineering assistant,rharrow@gosl.gov.lc
-8A,engineer,ulanda.antoine@govt.lc
-8B,technician,miguel.sonson@govt.lc
-8B,engineering assistant,marthaline.leonce@govt.lc
-8B,engineer ,ahkma.regis@govt.lc
-2,technician,ivfrancois@gosl.govt.lc
-2,engineering assistant,ofaucher@gosl.gov.lc
-2,engineer,jeanelle.fevrier@govt.lc
-projects,technician,kahil.francois@govt.lc
-projects,technician,pegustave@gosl.govt.lc
-projects,technician,alverez.henry@govt.lc
-Signs,technician,nbiroo@gosl.govt.lc
-signs,technician,josgeorge@gosl.govt.lc
-,admin,peter.morgan@govt.lc
+version https://git-lfs.github.com/spec/v1
+oid sha256:574acbf49076557fba96f42cfe36d7dcd9f40594c580d954ad71b8912a2a2f99
+size 995

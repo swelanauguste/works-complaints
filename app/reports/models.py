@@ -1,0 +1,49 @@
+from complaints.models import Complaint
+from django.db import models
+from users.models import User
+
+
+class TechnicalReportDocument(models.Model):
+    complaint = models.ForeignKey(
+        Complaint, on_delete=models.SET_NULL, null=True, related_name="technical_documents"
+    )
+    report_date = models.DateField(blank=True, null=True)
+    report_status = models.CharField(
+        max_length=6, choices=[("open", "Open"), ("closed", "Closed")], default="open"
+    )
+    document = models.FileField(
+        upload_to="technical_report_documents/", null=True, blank=True
+    )
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="technical_documents_created_by",
+        null=True,
+    )
+
+    def __str__(self):
+        return f"{self.complaint}"
+
+
+class EngineerReportDocument(models.Model):
+    complaint = models.ForeignKey(Complaint, on_delete=models.SET_NULL, null=True)
+    report_date = models.DateField(blank=True, null=True)
+    report_status = models.CharField(
+        max_length=6, choices=[("open", "Open"), ("closed", "Closed")], default="open"
+    )
+    document = models.FileField(
+        upload_to="engineer_report_documents/", null=True, blank=True
+    )
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="engineer_documents_created_by",
+        null=True,
+    )
+
+    def __str__(self):
+        return f"{self.complaint}"

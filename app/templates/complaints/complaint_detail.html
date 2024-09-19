@@ -5,8 +5,8 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container-fluid">
-    <h1>{{complaint|upper}}</h1>
+<div class="container-fluid mb-5">
+    <h1 class="display-4">{{complaint|upper}}</h1>
     <hr>
     <a class="btn btn-dark text-white"
         href="{% url 'create-complaint-photo' complaint.slug %}">Add
@@ -17,91 +17,97 @@
         href="{% url 'add-acknowledgement-letter' complaint.slug %}">Acknowledgment
         letter</a>
     {% endif %}
-    {% if request.user.role == "engineer" %}
-    <a class="btn btn-secondary text-white mt-lg-0"
-        href="{% url 'add-acknowledgement-letter' complaint.slug %}">Assign
-        Technician
-    </a>
-    <a class="btn btn-success text-white mt-2 mt-lg-0 ms-lg-1"
-        href="{% url 'add-acknowledgement-letter' complaint.slug %}">Upload
-        Report
-    </a>
-    {% endif %}
     <br><br>
-    <div class="row">
-        <div class="col-lg-3 mx-auto p-5 border shadow rounded-5 mb-lg-0 mb-2">
-            {% if request.user.role == "engineer" %}
-            <form action="{% url 'change-status' complaint.slug %}"
-                method="post">
-                {% csrf_token %}
-                {{change_status_form|crispy}}
-            </form>
-            <form action="{% url 'change-priority' complaint.slug %}"
-                method="post">
-                {% csrf_token %}
-                {{change_priority_form|crispy}}
-            </form>
+    <div class="col-lg-8 mx-auto">
+        <div class="row">
+            {% if request.user.role != "technician" %}
+            <div
+                class="col-lg-4 me-3 mx-auto p-5 border shadow rounded-5 mb-lg-0 mb-2">
+                {% if request.user.role == "engineer" %}
+                <form action="{% url 'change-status' complaint.slug %}"
+                    method="post">
+                    {% csrf_token %}
+                    {{change_status_form|crispy}}
+                </form>
+                <form action="{% url 'change-priority' complaint.slug %}"
+                    method="post">
+                    {% csrf_token %}
+                    {{change_priority_form|crispy}}
+                </form>
+                <form action="{% url 'assign-technician' complaint.slug %}"
+                    method="post">
+                    {% csrf_token %}
+                    {{assign_technician_form|crispy}}
+                </form>
+                {% endif %}
 
-            <form action="{% url 'assign-technician' complaint.slug %}"
-                method="post">
-                {% csrf_token %}
-                {{assign_technician_form|crispy}}
-            </form>
-            <hr>
+                {% if request.user.role == "admin" %}
+                <form action="{% url 'assign-engineer' complaint.slug %}"
+                    method="post">
+                    {% csrf_token %}
+                    {{assign_engineer_form|crispy}}
+                </form>
+                {% endif %}
+            </div>
             {% endif %}
 
-            {% if request.user.role == "admin" %}
-            <form action="{% url 'assign-engineer' complaint.slug %}"
-                method="post">
-                {% csrf_token %}
-                {{assign_engineer_form|crispy}}
-            </form>
-            {% endif %}
-        </div>
-        <br><br>
-        <div class="col-lg-8 mx-auto border shadow rounded-5 p-5">
-            <p title="zone"><strong>Zone: </strong>{{complaint.zone|capfirst }}
-            </p>
-            <p title="address"><strong>Address: </strong>
-                {{complaint.address|capfirst }}</p>
-            <p title="phone"><strong>Phone: </strong><a
-                    href="tel:{{complaint.phone }}">
-                    {{complaint.phone }}</a></p>
-            <p title="email"><strong>email: </strong><a
-                    href="mailto:{{complaint.email }}">
-                    {{complaint.email|default:"no email" }}</a></p>
+            <br><br>
+            <div class="col mx-auto border shadow rounded-5 p-5">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="display-4">Details</h1>
+                    <a href="">edit</a>
+                </div>
+                <hr>
+                <p title="zone"><strong>Zone:
+                    </strong>{{complaint.zone|capfirst }}
+                </p>
+                <p title="address"><strong>Address: </strong>
+                    {{complaint.address|capfirst }}</p>
+                <p title="phone"><strong>Phone: </strong><a
+                        href="tel:{{complaint.phone }}">
+                        {{complaint.phone }}</a></p>
+                <p title="email"><strong>email: </strong><a
+                        href="mailto:{{complaint.email }}">
+                        {{complaint.email|default:"no email" }}</a></p>
 
-            <p title="date"><strong>Date:
-                </strong>{{complaint.date}}({{complaint.created_at|naturaltime}})
-            </p>
-            {% if complaint.form %}
-            <p title="Complaints form"><strong>Form: </strong><a
-                    target="_blank"
-                    href="{{complaint.form.url}}">{{complaint.form|lower}}</a>
-            </p>
-            {% endif %}
-            {% if complaint.letters.first.letter %}
-            <p title="acknowledgment letter">
-                <strong>Acknowledgment Letter: </strong>
-                <a target="_blank"
-                    href="{{complaint.letters.first.letter.url }}">
-                    {{complaint.letters.first.filename|lower }}</a>
-            </p>
+                <p title="date"><strong>Date:
+                    </strong>{{complaint.date}}({{complaint.created_at|naturaltime}})
+                </p>
+                {% if complaint.form %}
+                <p title="Complaints form"><strong>Form: </strong><a
+                        target="_blank"
+                        href="{{complaint.form.url}}">{{complaint.form|lower}}</a>
+                </p>
+                {% endif %}
+                {% if complaint.letters.first.letter %}
+                <p title="acknowledgment letter">
+                    <strong>Acknowledgment Letter: </strong>
+                    <a target="_blank"
+                        href="{{complaint.letters.first.letter.url }}">
+                        {{complaint.letters.first.filename|lower }}</a>
+                </p>
 
-            {% endif %}
+                {% endif %}
 
-            <p> <strong>Engineer:</strong>
-                <a class="badge bg-success text-white"
-                    href="">{{assigned_engineer.engineer}}</a>
-            </p>
-            <hr>
-            <p title="complaint"><strong>Complaint:
-                </strong>{{complaint.complaint|capfirst }}</p>
+                <p> <strong>Engineer:</strong><br>
+                    <a class="badge bg-success text-white"
+                        href="">{{assigned_engineer.engineer}}</a>
+                </p>
+                <p> <strong>Technician:</strong><br>
+                    <a class="badge bg-warning text-dark"
+                        href="">{{assigned_technician.technician}}</a>
+                </p>
+                <hr>
+                <p title="complaint"><strong>Complaint:
+                    </strong><br>{{complaint.complaint|capfirst }}</p>
+            </div>
         </div>
     </div>
     {% if complaint.photos.all %}
     <br>
-    <div class="col-lg-8 shadow p-5 rounded-5">
+    <div class="col-lg-8 mx-auto shadow p-5 rounded-5">
+        <h1 class="display-4">Images</h1>
+        <hr>
         <p class="text-center">
             {% for img in complaint.photos.all %}
             <a target="_blank"
@@ -114,6 +120,37 @@
         </p>
     </div>
     {% endif %}
+    <div class="row">
+        <div class="col-lg-8 mx-auto p-5 my-2 shadow border rounded-5">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="display-4">Technical Report</h1>
+                <a href="">edit</a>
+            </div>
+            <hr>
+            <a class="btn btn-dark text-white"
+                href="{% url 'add-technical-report-document' complaint.slug %}">Attach
+                document</a>
+            <hr>
+
+            {% for docs in complaint.technical_documents.all %}
+            <li><a href="{{docs.document.url}}"
+                    target="_blank">{{docs.document|cut:"technical_report_documents/"|capfirst}}</a>
+            </li>
+            {% endfor %}
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 mx-auto p-5 my-2 shadow border rounded-5">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="display-4">Engineering Report</h1>
+                <a href="">edit</a>
+            </div>
+            <hr>
+            <a class="btn btn-dark text-white"
+                href="">Add Engineering Report</a>
+        </div>
+    </div>
 </div>
 
 {% endblock content %}

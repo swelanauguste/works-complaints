@@ -25,7 +25,7 @@ from .models import (
     ComplaintPhoto,
     Zone,
 )
-from .utils import send_engineer_assigned_email
+from .utils import send_engineer_assigned_email, send_technician_assigned_email
 
 
 @login_required
@@ -82,6 +82,10 @@ def assign_technician(request, slug):
             assign.complaint = complaint
             assign.created_by = request.user  # Ensure created_by is assigned
             assign.save()
+            messages.info(request, f"This complaint was assign to {assign.technician}")
+            send_technician_assigned_email.after_response(
+                assign.technician, assign.complaint
+            )
             # form.save_m2m()
             # Redirect to the complaint detail page
             return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
@@ -101,7 +105,9 @@ def assign_engineer(request, slug):
             assign.created_by = request.user  # Ensure created_by is assigned
             assign.save()
             messages.info(request, f"This complaint was assign to {assign.engineer}")
-            send_engineer_assigned_email(assign.engineer, assign.complaint)
+            send_engineer_assigned_email.after_response(
+                assign.engineer, assign.complaint
+            )
             # messages.info(request, f"An email was sent to {assign.engineer} at {assign.engineer.email}")
             # form.save_m2m()
             # Redirect to the complaint detail page
