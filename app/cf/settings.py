@@ -154,14 +154,6 @@ PASSWORD_RESET_TIMEOUT = 3600
 
 SITE_ID = 1
 
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
-ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = True
-ACCOUNT_LOGOUT_REDIRECT_URL = "/accounts/login/"
-
 # Redirect URLs
 LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "/users/login/"
@@ -169,7 +161,7 @@ LOGOUT_URL = "/users/login/"
 
 # Email settings
 ADMINS = [
-    ("ticketing system", "ict.infrastructure@govt.lc"),
+    ("infrastructure complaints", "kingship.lc@gmail.com"),
 ]
 
 
@@ -180,18 +172,20 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 DEFAULT_FROM_EMAIL = "complaints.infrastructure@gmail.com"
 
 
-if DEBUG:
-    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-    EMAIL_FILE_PATH = "emails"
-else:
-    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-    EMAIL_HOST = "mail.govt.lc"
-    EMAIL_HOST_USER = "ict.infrastructure@govt.lc"
-    EMAIL_HOST_PASSWORD = os.environ.get("PASS")
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    # EMAIL_USE_SSL = False
+# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+# EMAIL_FILE_PATH = "emails"
 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "mail.govt.lc"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = "kingship.lc@gmail.com"
+EMAIL_HOST_PASSWORD = os.environ.get("PASS")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
+
+
+if DEBUG:
     # Logging settings
     LOGGING = {
         "version": 1,
