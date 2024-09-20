@@ -10,6 +10,8 @@
     enctype="multipart/form-data">
     {% csrf_token %}
     {{form|crispy}}
-    <button type="submit">Add</button>
+    <div class="d-grid">
+        <button type="submit">Upload</button>
+    </div>
 </form>
 {% endblock content %}

@@ -8,15 +8,13 @@
 <div class="container-fluid mb-5">
     <h1 class="display-4">{{complaint|upper}}</h1>
     <hr>
-    <a class="btn btn-dark text-white"
-        href="{% url 'create-complaint-photo' complaint.slug %}">Add
-        Photos</a>
-    {% if request.user.role == "admin" %}
 
+    {% if request.user.role == "admin" %}
     <a class="btn btn-dark text-white mt-2 mt-lg-0"
         href="{% url 'add-acknowledgement-letter' complaint.slug %}">Acknowledgment
         letter</a>
     {% endif %}
+
     <br><br>
     <div class="col-lg-8 mx-auto">
         <div class="row">
@@ -55,7 +53,9 @@
             <div class="col mx-auto border shadow rounded-5 p-5">
                 <div class="d-flex justify-content-between align-items-center">
                     <h1 class="display-4">Details</h1>
-                    <a href="">edit</a>
+                    {% if request.user.role == "admin" %}
+                    <a href="{% url 'update' complaint.slug %}">edit</a>
+                    {% endif %}
                 </div>
                 <hr>
                 <p title="zone"><strong>Zone:
@@ -103,23 +103,48 @@
             </div>
         </div>
     </div>
-    {% if complaint.photos.all %}
     <br>
-    <div class="col-lg-8 mx-auto shadow p-5 rounded-5">
-        <h1 class="display-4">Images</h1>
-        <hr>
-        <p class="text-center">
-            {% for img in complaint.photos.all %}
-            <a target="_blank"
-                href="{{img.photo.url}}"><img class="mb-1"
-                    height="300"
-                    src="{{img.photo.url}}"
-                    alt="">
-            </a>
+    <div class="row">
+        <div class="col-lg-8 mx-auto shadow p-5 rounded-5">
+            <h1 class="display-4">Images</h1>
+            <hr>
+            <a class="btn btn-dark text-white"
+                href="{% url 'create-complaint-photo' complaint.slug %}">Add
+                images</a>
+            <hr>
+            <p class="text-center">
+                {% for img in complaint.photos.all %}
+                <a target="_blank"
+                    href="{{img.photo.url}}"><img class="mb-1"
+                        height="300"
+                        src="{{img.photo.url}}"
+                        alt="{{img.photo.url}}">
+                </a>
+                {% empty %}
+            <p class="text-center">No images</p>
             {% endfor %}
-        </p>
+            </p>
+        </div>
+    </div>
+    {% if request.user.role != "technician" %}
+    <div class="row">
+        <div class="col-lg-8 mx-auto p-5 my-2 shadow border rounded-5">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="display-4">Engineering Report</h1>
+            </div>
+            <hr>
+            <a class="btn btn-dark text-white"
+                href="{% url 'add-engineer-report-document' complaint.slug %}">Attach document</a>
+            <hr>
+            {% for docs in complaint.technical_documents.all %}
+            <li><a href="{{docs.document.url}}"
+                    target="_blank">{{docs.document|cut:"technical_report_documents/"|capfirst}}</a>
+            </li>
+            {% endfor %}
+        </div>
     </div>
     {% endif %}
+
     <div class="row">
         <div class="col-lg-8 mx-auto p-5 my-2 shadow border rounded-5">
             <div class="d-flex justify-content-between align-items-center">
@@ -138,17 +163,6 @@
             </li>
             {% endfor %}
 
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-8 mx-auto p-5 my-2 shadow border rounded-5">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1 class="display-4">Engineering Report</h1>
-                <a href="">edit</a>
-            </div>
-            <hr>
-            <a class="btn btn-dark text-white"
-                href="">Add Engineering Report</a>
         </div>
     </div>
 </div>

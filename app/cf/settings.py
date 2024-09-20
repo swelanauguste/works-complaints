@@ -172,16 +172,16 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 DEFAULT_FROM_EMAIL = "complaints.infrastructure@gmail.com"
 
 
-# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-# EMAIL_FILE_PATH = "emails"
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = "emails"
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST = "mail.govt.lc"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "kingship.lc@gmail.com"
-EMAIL_HOST_PASSWORD = os.environ.get("PASS")
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# # EMAIL_HOST = "mail.govt.lc"
+# EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_HOST_USER = "kingship.lc@gmail.com"
+# EMAIL_HOST_PASSWORD = os.environ.get("PASS")
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
 # EMAIL_USE_SSL = False
 
 

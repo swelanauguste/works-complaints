@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<form class="col-lg-4 p-5 m-5 shadow rounded-5 border mx-auto"
+    method="post">
+    <h1 class="display-4">{{complaint|upper}}</h1>
+    <hr>
+    {% csrf_token %}
+    {{form|crispy}}
+    <div class="d-grid">
+        <button type="submit">Submit</button><br><br>
+    </div>
+    <a href="{% url 'detail' complaint.slug %}">Cancel</a>
+</form>
+{% endblock content %}

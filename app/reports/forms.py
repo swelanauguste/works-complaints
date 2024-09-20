@@ -27,17 +27,23 @@ class TechnicalReportDocumentForm(forms.ModelForm):
 
     class Meta:
         model = TechnicalReportDocument
-        fields = ["report_date", "report_status", "documents", "comment"]
+        fields = ["report_date", "documents", "comment"]
         widgets = {
             "report": forms.HiddenInput(),
             "comment": forms.Textarea(attrs={"rows": 5}),
-            "report_date": forms.DateInput(attrs={"type": 'date'}),
+            "report_date": forms.DateInput(attrs={"type": "date"}),
         }
 
 
 class EngineerReportDocumentForm(forms.ModelForm):
     documents = MultipleFileField(label="Select files", required=False)
+    comment = forms.CharField(widget=forms.Textarea, required=False)
 
     class Meta:
         model = EngineerReportDocument
-        fields = "__all__"
+        fields = ["report_date", "documents", "comment"]
+        widgets = {
+            "report": forms.HiddenInput(),
+            "comment": forms.Textarea(attrs={"rows": 5}),
+            "report_date": forms.DateInput(attrs={"type": "date"}),
+        }

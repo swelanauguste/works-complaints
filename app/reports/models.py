@@ -8,9 +8,9 @@ class TechnicalReportDocument(models.Model):
         Complaint, on_delete=models.SET_NULL, null=True, related_name="technical_documents"
     )
     report_date = models.DateField(blank=True, null=True)
-    report_status = models.CharField(
-        max_length=6, choices=[("open", "Open"), ("closed", "Closed")], default="open"
-    )
+    # report_status = models.CharField(
+    #     max_length=6, choices=[("open", "Open"), ("closed", "Closed")], default="open"
+    # )
     document = models.FileField(
         upload_to="technical_report_documents/", null=True, blank=True
     )
@@ -30,9 +30,9 @@ class TechnicalReportDocument(models.Model):
 class EngineerReportDocument(models.Model):
     complaint = models.ForeignKey(Complaint, on_delete=models.SET_NULL, null=True)
     report_date = models.DateField(blank=True, null=True)
-    report_status = models.CharField(
-        max_length=6, choices=[("open", "Open"), ("closed", "Closed")], default="open"
-    )
+    # report_status = models.CharField(
+    #     max_length=6, choices=[("open", "Open"), ("closed", "Closed")], default="open"
+    # )
     document = models.FileField(
         upload_to="engineer_report_documents/", null=True, blank=True
     )

@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path("", views.complaint_list, name="list"),
     path("detail/<slug:slug>/", views.complaint_detail, name="detail"),
+    path("update/<slug:slug>/", views.complaint_update, name="update"),
     path("create/", views.complaint_create, name="create"),
     path(
         "create-complaint-photo/<slug:slug>/",
@@ -37,3 +38,4 @@ urlpatterns = [
         name="change-priority",
     ),
 ]
+
