@@ -233,8 +233,8 @@
             </div>
             <hr>
             <p
-                class="badge {% if review.is_approve == approved %} bg-success {% else %} bg-warning {% endif %}">
-                {{review.is_approved|yesno:"approve,no"|upper }}</p>
+                class="badge {% if review.is_approve == admin %} bg-success {% else %} bg-warning {% endif %}">
+                {{review.is_approved|yesno:"approve,not approved"|upper }}</p>
             <p>{{review.comment}}</p>
             <p class="text-muted small text-end">{{review.created_by}} -
                 {{review.created_at}}</p>
