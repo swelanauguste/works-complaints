@@ -130,7 +130,7 @@
                     {{comment.created_by}}-{{comment.created_at}}</p>
                 <hr>
                 {% empty %}
-                <p>No comments yet</p>
+                <p class="text-center">No comments yet</p>
                 {% endfor %}
             </div>
         </div>
@@ -165,9 +165,6 @@
                         </p>
                     </div>
                 </div>
-
-                {% empty %}
-                <p class="text-center">No images</p>
                 {% endfor %}
             </div>
 
@@ -210,14 +207,15 @@
             <hr>
 
             {% for doc in complaint.technical_documents.all %}
-            <li><a href="{{doc.document.url}}"
+            <p><a href="{{doc.document.url}}"
                     target="_blank">{{doc.document|cut:"technical_report_documents/"|lower}}</a>
-                <p>{{doc.comment|capfirst}}</p>
                 <a href="{% url 'delete-technical-document' doc.pk %}"><img
                         src="{% static 'icons/delete.svg'%}"
                         alt="{% static 'icons/delete.svg'%}"></a>
+                <p>{{doc.comment|capfirst}}</p>
 
-            </li>
+
+            </p>
             {% endfor %}
 
         </div>
@@ -226,15 +224,15 @@
         <div class="col-lg-8 mx-auto p-5 my-2 shadow border rounded-5">
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="display-4">Complaint Review</h1>
-                {% if request.user.role == "approver" %}
+                {% if request.user.role == "admin" %}
                 <a
                     href="{% url 'complaint-review' complaint.slug %}">Review</a>
                 {% endif %}
             </div>
             <hr>
             <p
-                class="badge {% if review.is_approve == admin %} bg-success {% else %} bg-warning {% endif %}">
-                {{review.is_approved|yesno:"approve,not approved"|upper }}</p>
+                class="badge {% if review.is_approved == True %} bg-success {% else %} bg-warning {% endif %}">
+                {{review.is_approved|yesno:"approved,pending-approval"|upper }}</p>
             <p>{{review.comment}}</p>
             <p class="text-muted small text-end">{{review.created_by}} -
                 {{review.created_at}}</p>
