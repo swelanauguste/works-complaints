@@ -51,7 +51,7 @@ def add_engineer_report_document(request, slug):
             comment = form.cleaned_data["comment"]
             for file in files:
                 # Create a new ComplaintPhoto for each file
-                document_instance = TechnicalReportDocument(
+                document_instance = EngineerReportDocument(
                     complaint=complaint,
                     comment=comment,
                     document=file,  # Save each file individually
