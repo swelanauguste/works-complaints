@@ -1,5 +1,4 @@
 import os
-import uuid
 
 from django.db import models
 from django.shortcuts import reverse
@@ -67,6 +66,18 @@ class Complaint(models.Model):
     def __str__(self):
 
         return f"{self.ref} - {self.zone}"
+
+
+class ComplaintComment(models.Model):
+    complaint = models.ForeignKey(
+        Complaint, on_delete=models.CASCADE, null=True, related_name="comments"
+    )
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.complaint.ref.upper()
 
 
 class ComplaintPhoto(models.Model):
@@ -178,19 +189,6 @@ class ChangePriority(models.Model):
 
     def __str__(self):
         return f"{self.complaint} {self.status}"
-
-
-# class ComplaintComment(models.Model):
-#     complaint = models.ForeignKey(
-#         ComplaintInvestigator, on_delete=models.CASCADE, null=True
-#     )
-#     comment = models.TextField()
-#     file = models.FieldFile(upload_to="complaints", null=True, blank=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-
-#     def __str__(self):
-#         return self.complaint.name
 
 
 # class Report(models.Model):

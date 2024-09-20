@@ -37,5 +37,19 @@ urlpatterns = [
         views.change_priority,
         name="change-priority",
     ),
+    path(
+        "delete-engineering-document/<int:pk>/",
+        views.delete_engineering_document,
+        name="delete-engineering-document",
+    ),
+    path(
+        "delete-technical-document/<int:pk>/",
+        views.delete_technical_document,
+        name="delete-technical-document",
+    ),
+    path(
+        "delete-complaint-photo/<int:pk>/",
+        views.delete_complaint_photo_document,
+        name="delete-complaint-photo",
+    ),
 ]
-

@@ -5,6 +5,11 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView
+from reports.models import (
+    ComplaintReview,
+    EngineerReportDocument,
+    TechnicalReportDocument,
+)
 
 from .forms import (
     AcknowledgementLetterForm,
@@ -12,6 +17,7 @@ from .forms import (
     AssignTechnicianForm,
     ChangePriorityForm,
     ChangeStatusForm,
+    ComplaintCommentForm,
     ComplaintForm,
     ComplaintPhotoForm,
 )
@@ -26,6 +32,39 @@ from .models import (
     Zone,
 )
 from .utils import send_engineer_assigned_email, send_technician_assigned_email
+
+
+@login_required
+def delete_complaint_photo_document(request, pk):
+    photo = get_object_or_404(ComplaintPhoto, pk=pk)
+    complaint_slug = photo.complaint.slug
+
+    # Delete the document
+    photo.delete()
+
+    return redirect(reverse_lazy("detail", kwargs={"slug": complaint_slug}))
+
+
+@login_required
+def delete_technical_document(request, pk):
+    document = get_object_or_404(TechnicalReportDocument, pk=pk)
+    complaint_slug = document.complaint.slug
+
+    # Delete the document
+    document.delete()
+
+    return redirect(reverse_lazy("detail", kwargs={"slug": complaint_slug}))
+
+
+@login_required
+def delete_engineering_document(request, pk):
+    document = get_object_or_404(EngineerReportDocument, pk=pk)
+    complaint_slug = document.complaint.slug
+
+    # Delete the document
+    document.delete()
+
+    return redirect(reverse_lazy("detail", kwargs={"slug": complaint_slug}))
 
 
 @login_required
@@ -237,6 +276,18 @@ def complaint_detail(request, slug):
     assigned_technician = None
     status = None
     priority = None
+    review = None
+    if request.method == "POST":
+        comment_form = ComplaintCommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.complaint = complaint
+            comment.created_by = request.user
+            comment.save()
+            messages.success(request, "Comment added successfully.")
+            return redirect("detail", slug=complaint.slug)
+    else:
+        comment_form = ComplaintCommentForm()
 
     try:
         assigned_engineer = AssignEngineer.objects.filter(complaint=complaint).first()
@@ -245,16 +296,19 @@ def complaint_detail(request, slug):
         ).first()
         status = ChangeStatus.objects.filter(complaint=complaint).first()
         priority = ChangePriority.objects.filter(complaint=complaint).first()
+        review = ComplaintReview.objects.filter(complaint=complaint).first()
     except Exception as e:
         pass
 
     # Extract the actual engineer and technician from the assignment objects
     engineer = assigned_engineer.engineer if assigned_engineer else None
     technician = assigned_technician.technician if assigned_technician else None
+    # review = review.technician if assigned_technician else None
 
     # Fetch related data if necessary
     photos = complaint.photos.all()  # Assuming Complaint has a related Photo model
     letters = complaint.letters.all()
+    comments = complaint.comments.all().order_by("-created_at")
 
     # Initialize forms with existing data
     change_status_form = ChangeStatusForm(
@@ -283,6 +337,9 @@ def complaint_detail(request, slug):
         "change_priority_form": change_priority_form,
         "assign_engineer_form": assign_engineer_form,
         "assign_technician_form": assign_technician_form,
+        "comments": comments,
+        "review": review,
+        "comment_form": comment_form,
     }
 
     return render(request, "complaints/complaint_detail.html", context)

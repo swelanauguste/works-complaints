@@ -1,6 +1,18 @@
 from django import forms
 
-from .models import EngineerReportDocument, TechnicalReportDocument
+from .models import (ComplaintReview, EngineerReportDocument,
+                     TechnicalReportDocument)
+
+
+class ComplaintReviewForm(forms.ModelForm):
+    class Meta:
+        model = ComplaintReview
+        fields = ["date", "comment", "is_approved"]
+        widgets = {
+            "complaint": forms.HiddenInput(),
+            "comment": forms.Textarea(attrs={"rows": 5}),
+            "date": forms.DateInput(attrs={"type": "date"}),
+        }
 
 
 class MultipleFileInput(forms.ClearableFileInput):
@@ -47,3 +59,4 @@ class EngineerReportDocumentForm(forms.ModelForm):
             "comment": forms.Textarea(attrs={"rows": 5}),
             "report_date": forms.DateInput(attrs={"type": "date"}),
         }
+        

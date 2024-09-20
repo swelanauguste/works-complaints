@@ -1,20 +1,21 @@
 from django.contrib import admin
 
-from .models import AcknowledgementLetter  # ComplaintComment,
 from .models import (
+    AcknowledgementLetter,
     AssignEngineer,
     AssignTechnician,
     Category,
     ChangePriority,
     ChangeStatus,
     Complaint,
+    ComplaintComment,
     ComplaintPhoto,
 )
 
 admin.site.register(Complaint)
 admin.site.register(ComplaintPhoto)
 admin.site.register(AssignEngineer)
-# admin.site.register(ComplaintComment)
+admin.site.register(ComplaintComment)
 admin.site.register(AcknowledgementLetter)
 admin.site.register(Category)
 admin.site.register(ChangeStatus)

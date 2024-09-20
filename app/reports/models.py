@@ -1,13 +1,17 @@
 from complaints.models import Complaint
 from django.db import models
+from django.utils import timezone
 from users.models import User
 
 
 class TechnicalReportDocument(models.Model):
     complaint = models.ForeignKey(
-        Complaint, on_delete=models.SET_NULL, null=True, related_name="technical_documents"
+        Complaint,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="technical_documents",
     )
-    report_date = models.DateField(blank=True, null=True)
+    report_date = models.DateField(blank=True, null=True, default=timezone.now)
     # report_status = models.CharField(
     #     max_length=6, choices=[("open", "Open"), ("closed", "Closed")], default="open"
     # )
@@ -28,8 +32,13 @@ class TechnicalReportDocument(models.Model):
 
 
 class EngineerReportDocument(models.Model):
-    complaint = models.ForeignKey(Complaint, on_delete=models.SET_NULL, null=True, related_name="engineering_documents")
-    report_date = models.DateField(blank=True, null=True)
+    complaint = models.ForeignKey(
+        Complaint,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="engineering_documents",
+    )
+    report_date = models.DateField(blank=True, null=True, default=timezone.now)
     # report_status = models.CharField(
     #     max_length=6, choices=[("open", "Open"), ("closed", "Closed")], default="open"
     # )
@@ -47,3 +56,23 @@ class EngineerReportDocument(models.Model):
 
     def __str__(self):
         return f"{self.complaint}"
+
+
+class ComplaintReview(models.Model):
+    complaint = models.ForeignKey(
+        Complaint, on_delete=models.CASCADE, related_name="complaint_reviews"
+    )
+    date = models.DateField(blank=True, null=True, default=timezone.now)
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
+    is_approved = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.complaint.ref}"

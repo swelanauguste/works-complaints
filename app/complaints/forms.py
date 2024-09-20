@@ -7,9 +7,21 @@ from .models import (
     ChangePriority,
     ChangeStatus,
     Complaint,
+    ComplaintComment,
     ComplaintPhoto,
     User,
 )
+
+
+class ComplaintCommentForm(forms.ModelForm):
+    class Meta:
+        model = ComplaintComment
+        fields = ["comment"]
+        widgets = {
+            "content": forms.Textarea(
+                attrs={"rows": 3, "placeholder": "Add a comment..."}
+            ),
+        }
 
 
 class ChangePriorityForm(forms.ModelForm):

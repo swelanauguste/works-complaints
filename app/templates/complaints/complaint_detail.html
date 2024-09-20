@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% load humanize %}
 
 {% load crispy_forms_tags %}
@@ -50,7 +50,7 @@
             {% endif %}
 
             <br><br>
-            <div class="col mx-auto border shadow rounded-5 p-5">
+            <div class="col mx-auto border shadow rounded-5 p-lg-5 p-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <h1 class="display-4">Details</h1>
                     {% if request.user.role == "admin" %}
@@ -101,55 +101,107 @@
                 <p title="complaint"><strong>Complaint:
                     </strong><br>{{complaint.complaint|capfirst }}</p>
             </div>
+
+        </div>
+    </div>
+    <br>
+    <div class="col-lg-8 mx-auto shadow p-lg-5 p-3 rounded-5">
+        <h2>Comments</h2>
+        <hr>
+        <div class="row">
+            <div class="col-lg-5 p-3 p-lg-5 rounded-5 me-lg-2 mb-2"
+                style="height: fit-content;">
+                <form action=""
+                    method="post">
+                    {% csrf_token %}
+                    {{comment_form|crispy}}
+
+                    <div class="d-grid">
+                        <button type="submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col rounded-5 p-5"
+                style="overflow-x: hidden;height: 25rem;">
+
+                {% for comment in comments %}
+                <p>{{comment.comment}}</p>
+                <p class="text-muted small text-end">
+                    {{comment.created_by}}-{{comment.created_at}}</p>
+                <hr>
+                {% empty %}
+                <p>No comments yet</p>
+                {% endfor %}
+            </div>
         </div>
     </div>
     <br>
     <div class="row">
-        <div class="col-lg-8 mx-auto shadow p-5 rounded-5">
+        <div class="col-lg-8 mx-auto shadow p-lg-5 p-3 rounded-5">
             <h1 class="display-4">Images</h1>
             <hr>
             <a class="btn btn-dark text-white"
                 href="{% url 'create-complaint-photo' complaint.slug %}">Add
                 images</a>
             <hr>
-            <p class="text-center">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
                 {% for img in complaint.photos.all %}
-                <a target="_blank"
-                    href="{{img.photo.url}}"><img class="mb-1"
-                        height="300"
-                        src="{{img.photo.url}}"
-                        alt="{{img.photo.url}}">
-                </a>
+                <div class="col">
+                    <div class="card">
+                        <a target="_blank"
+                            href="{{img.photo.url}}">
+                            <img src="{{img.photo.url}}"
+                                class="card-img-top"
+                                alt="{{img.photo.url}}"></a>
+                        <div class="card-body">
+                            <h5 class="card-title"></h5>
+                            <p class="card-text">{{img.comment|capfirst}}</p>
+                        </div>
+                        <hr>
+                        <p class="text-end me-2"><a
+                                href="{% url 'delete-complaint-photo' img.pk %}"><img
+                                    src="{% static 'icons/delete.svg'%}"
+                                    alt="{% static 'icons/delete.svg'%}"></a>
+                        </p>
+                    </div>
+                </div>
+
                 {% empty %}
-            <p class="text-center">No images</p>
-            {% endfor %}
-            </p>
+                <p class="text-center">No images</p>
+                {% endfor %}
+            </div>
+
         </div>
     </div>
     {% if request.user.role != "technician" %}
     <div class="row">
-        <div class="col-lg-8 mx-auto p-5 my-2 shadow border rounded-5">
+        <div class="col-lg-8 mx-auto p-lg-5 p-3 my-2 shadow border rounded-5">
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="display-4">Engineering Report</h1>
             </div>
             <hr>
             <a class="btn btn-dark text-white"
-                href="{% url 'add-engineer-report-document' complaint.slug %}">Attach document</a>
+                href="{% url 'add-engineer-report-document' complaint.slug %}">Attach
+                document</a>
             <hr>
-            {% for docs in complaint.engineering_documents.all %}
-            <li><a href="{{docs.document.url}}"
-                    target="_blank">{{docs.document|cut:"engineer_report_documents/"|capfirst}}</a>
-            </li>
+            {% for doc in complaint.engineering_documents.all %}
+            <p><a href="{{doc.document.url}}"
+                    target="_blank">{{doc.document|cut:"engineer_report_documents/"|lower}}</a>
+                <a href="{% url 'delete-engineering-document' doc.pk %}"><img
+                        src="{% static 'icons/delete.svg'%}"
+                        alt="{% static 'icons/delete.svg'%}"></a>
+            <p>{{doc.comment|capfirst}}</p>
+            <hr>
+
+            </p>
             {% endfor %}
         </div>
     </div>
     {% endif %}
-
     <div class="row">
         <div class="col-lg-8 mx-auto p-5 my-2 shadow border rounded-5">
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="display-4">Technical Report</h1>
-                <a href="">edit</a>
             </div>
             <hr>
             <a class="btn btn-dark text-white"
@@ -157,12 +209,35 @@
                 document</a>
             <hr>
 
-            {% for docs in complaint.technical_documents.all %}
-            <li><a href="{{docs.document.url}}"
-                    target="_blank">{{docs.document|cut:"technical_report_documents/"|capfirst}}</a>
+            {% for doc in complaint.technical_documents.all %}
+            <li><a href="{{doc.document.url}}"
+                    target="_blank">{{doc.document|cut:"technical_report_documents/"|lower}}</a>
+                <p>{{doc.comment|capfirst}}</p>
+                <a href="{% url 'delete-technical-document' doc.pk %}"><img
+                        src="{% static 'icons/delete.svg'%}"
+                        alt="{% static 'icons/delete.svg'%}"></a>
+
             </li>
             {% endfor %}
 
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 mx-auto p-5 my-2 shadow border rounded-5">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="display-4">Complaint Review</h1>
+                {% if request.user.role == "approver" %}
+                <a
+                    href="{% url 'complaint-review' complaint.slug %}">Review</a>
+                {% endif %}
+            </div>
+            <hr>
+            <p
+                class="badge {% if review.is_approve == approved %} bg-success {% else %} bg-warning {% endif %}">
+                {{review.is_approved|yesno:"approve,no"|upper }}</p>
+            <p>{{review.comment}}</p>
+            <p class="text-muted small text-end">{{review.created_by}} -
+                {{review.created_at}}</p>
         </div>
     </div>
 </div>

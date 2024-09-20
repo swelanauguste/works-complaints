@@ -185,7 +185,7 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
 
-if DEBUG:
+if DEBUG == False:
     # Logging settings
     LOGGING = {
         "version": 1,

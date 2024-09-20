@@ -4,8 +4,37 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView
 
-from .forms import EngineerReportDocumentForm, TechnicalReportDocumentForm
-from .models import EngineerReportDocument, TechnicalReportDocument
+from .forms import (
+    ComplaintReviewForm,
+    EngineerReportDocumentForm,
+    TechnicalReportDocumentForm,
+)
+from .models import ComplaintReview, EngineerReportDocument, TechnicalReportDocument
+
+
+@login_required
+def complaint_review(request, slug):
+    # Get the specific complaint
+    complaint = get_object_or_404(Complaint, slug=slug)
+
+    if request.method == "POST":
+        form = ComplaintReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.complaint = complaint
+            review.created_by = request.user
+            review.save()
+            # Redirect to the complaint detail page after saving all photos
+            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+    else:
+        form = ComplaintReviewForm()
+
+    context = {
+        "form": form,
+        "complaint": complaint,
+    }
+
+    return render(request, "report/complaint_review_form.html", context)
 
 
 @login_required
