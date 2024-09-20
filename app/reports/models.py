@@ -28,7 +28,7 @@ class TechnicalReportDocument(models.Model):
 
 
 class EngineerReportDocument(models.Model):
-    complaint = models.ForeignKey(Complaint, on_delete=models.SET_NULL, null=True)
+    complaint = models.ForeignKey(Complaint, on_delete=models.SET_NULL, null=True, related_name="engineering_documents")
     report_date = models.DateField(blank=True, null=True)
     # report_status = models.CharField(
     #     max_length=6, choices=[("open", "Open"), ("closed", "Closed")], default="open"

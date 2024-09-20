@@ -136,9 +136,9 @@
             <a class="btn btn-dark text-white"
                 href="{% url 'add-engineer-report-document' complaint.slug %}">Attach document</a>
             <hr>
-            {% for docs in complaint.technical_documents.all %}
+            {% for docs in complaint.engineering_documents.all %}
             <li><a href="{{docs.document.url}}"
-                    target="_blank">{{docs.document|cut:"technical_report_documents/"|capfirst}}</a>
+                    target="_blank">{{docs.document|cut:"engineer_report_documents/"|capfirst}}</a>
             </li>
             {% endfor %}
         </div>
