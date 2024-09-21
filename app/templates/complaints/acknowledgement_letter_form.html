@@ -4,14 +4,17 @@
 
 
 {% block content %}
-<form class="col-lg-3 mx-auto m-5"
-    action=""
-    enctype="multipart/form-data"
-    method="post">
-    {% csrf_token %}
-    {{form|crispy}}
-    <div class="d-grid">
-        <button type="submit">Attach letter</button>
-    </div>
-</form>
+<h1 class="dispaly-4 text-center">Acknowledgment letter</h1>
+<hr>
+<div class="col-lg-4 mx-auto">
+    <form action=""
+        enctype="multipart/form-data"
+        method="post">
+        {% csrf_token %}
+        {{form|crispy}}
+        <div class="d-grid">
+            <button type="submit">Attach</button>
+        </div>
+    </form>
+</div>
 {% endblock content %}

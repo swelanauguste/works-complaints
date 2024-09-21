@@ -171,56 +171,53 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 DEFAULT_FROM_EMAIL = "complaints.infrastructure@gmail.com"
 
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = "emails"
 
-# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-# EMAIL_FILE_PATH = "emails"
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# # EMAIL_HOST = "mail.govt.lc"
+# EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_HOST_USER = "kingship.lc@gmail.com"
+# EMAIL_HOST_PASSWORD = os.environ.get("PASS")
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST = "mail.govt.lc"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "kingship.lc@gmail.com"
-EMAIL_HOST_PASSWORD = os.environ.get("PASS")
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-
-
-if DEBUG == False:
-    # Logging settings
-    LOGGING = {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "formatters": {
-            "verbose": {
-                "format": "{levelname}, {asctime}, {module}, {process:d}, {thread:d}, {message}",
-                "style": "{",
-            },
-            "simple": {
-                "format": "{levelname} {message}",
-                "style": "{",
-            },
+# Logging settings
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname}, {asctime}, {module}, {process:d}, {thread:d}, {message}",
+            "style": "{",
         },
-        "handlers": {
-            "file": {
-                "level": "WARNING",
-                "class": "logging.FileHandler",
-                "filename": BASE_DIR / "debug/debug.log",
-                "formatter": "verbose",
-            },
-            "mail_admins": {
-                "level": "ERROR",
-                "class": "django.utils.log.AdminEmailHandler",
-                "formatter": "verbose",
-            },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
         },
-        "loggers": {
-            "django": {
-                "handlers": ["file", "mail_admins"],
-                "level": "WARNING",
-                "propagate": True,
-            },
+    },
+    "handlers": {
+        "file": {
+            "level": "WARNING",
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "debug/debug.log",
+            "formatter": "verbose",
         },
-    }
+        "mail_admins": {
+            "level": "ERROR",
+            "class": "django.utils.log.AdminEmailHandler",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file", "mail_admins"],
+            "level": "WARNING",
+            "propagate": True,
+        },
+    },
+}
 
 
 # PWA settings

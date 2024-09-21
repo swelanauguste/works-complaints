@@ -1,13 +1,12 @@
 from django import forms
 
-from .models import (ComplaintReview, EngineerReportDocument,
-                     TechnicalReportDocument)
+from .models import ComplaintReview, EngineerReportDocument, TechnicalReportDocument
 
 
 class ComplaintReviewForm(forms.ModelForm):
     class Meta:
         model = ComplaintReview
-        fields = ["date", "comment", "is_approved"]
+        fields = ["date", "comment", "review"]
         widgets = {
             "complaint": forms.HiddenInput(),
             "comment": forms.Textarea(attrs={"rows": 5}),
@@ -59,4 +58,3 @@ class EngineerReportDocumentForm(forms.ModelForm):
             "comment": forms.Textarea(attrs={"rows": 5}),
             "report_date": forms.DateInput(attrs={"type": "date"}),
         }
-        

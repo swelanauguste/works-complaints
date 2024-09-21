@@ -63,13 +63,20 @@ class ComplaintReview(models.Model):
         Complaint, on_delete=models.CASCADE, related_name="complaint_reviews"
     )
     date = models.DateField(blank=True, null=True, default=timezone.now)
-    comment = models.TextField(blank=True, null=True)
+    comment = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
     )
-    is_approved = models.BooleanField(default=False)
+    APPROVAL_STATUS_CHOICES = (
+        ("pending", "Pending Review"),
+        ("not-approved", "Not Approved"),
+        ("approved", "Approved"),
+    )
+    review = models.CharField(
+        max_length=12, choices=APPROVAL_STATUS_CHOICES, default="pending"
+    )
 
     class Meta:
         ordering = ["-created_at"]

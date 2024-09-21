@@ -10,6 +10,7 @@ from .forms import (
     TechnicalReportDocumentForm,
 )
 from .models import ComplaintReview, EngineerReportDocument, TechnicalReportDocument
+from .utils import send_approval_email, send_non_approval_email
 
 
 @login_required
@@ -20,10 +21,15 @@ def complaint_review(request, slug):
     if request.method == "POST":
         form = ComplaintReviewForm(request.POST)
         if form.is_valid():
-            review = form.save(commit=False)
-            review.complaint = complaint
-            review.created_by = request.user
-            review.save()
+            complaint_review = form.save(commit=False)
+            complaint_review.complaint = complaint
+            complaint_review.created_by = request.user
+            complaint_review.save()
+            review = form.cleaned_data["review"]
+            if review:
+                send_approval_email.after_response(complaint)
+            else:
+                send_non_approval_email.after_response(complaint)
             # Redirect to the complaint detail page after saving all photos
             return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
     else:
@@ -34,7 +40,7 @@ def complaint_review(request, slug):
         "complaint": complaint,
     }
 
-    return render(request, "report/complaint_review_form.html", context)
+    return render(request, "reports/complaint_review_form.html", context)
 
 
 @login_required
@@ -65,7 +71,7 @@ def add_technical_report_document(request, slug):
         "complaint": complaint,
     }
 
-    return render(request, "report/report_document_form.html", context)
+    return render(request, "reports/report_document_form.html", context)
 
 
 @login_required
@@ -96,4 +102,4 @@ def add_engineer_report_document(request, slug):
         "complaint": complaint,
     }
 
-    return render(request, "report/report_document_form.html", context)
+    return render(request, "reports/report_document_form.html", context)

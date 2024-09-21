@@ -251,7 +251,7 @@ def complaint_list(request):
 
     # Pagination (optional)
     page = request.GET.get("page", 1)
-    paginator = Paginator(complaints, 18)  # Show 10 complaints per page
+    paginator = Paginator(complaints, 25)  # Show 10 complaints per page
     complaints = paginator.get_page(page)
 
     context = {

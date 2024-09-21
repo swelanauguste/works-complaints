@@ -83,7 +83,8 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Ref#</th>
-                    <th scope="col">Complaints</th>
+                    <th scope="col">Contact</th>
+                    <th scope="col">Zone</th>
                 </tr>
             </thead>
             <tbody>
@@ -93,11 +94,9 @@
                     <td><a
                             href="{% url 'detail' ob.slug %}">{{ob.ref|upper}}</a>
                     </td>
-                    <td><a class="text-decoration-none"
-                            href="{% url 'detail' ob.slug %}">{{ob.zone}} |
-                            {{ob.address|title}} |
-                            <a href="tel:{{ob.phone}}">{{ob.phone}}</a></a> |
-                        {{ob.created_at|naturaltime}}</td>
+                    <td>{{ob.get_contact_info}}</td>
+                    <td>{{ob.zone}}</td>
+
                 </tr>
                 {% empty %}
                 <tr>

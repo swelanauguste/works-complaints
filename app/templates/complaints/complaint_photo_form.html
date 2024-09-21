@@ -4,12 +4,20 @@
 
 
 {% block content %}
-<form class="col-lg-4 mx-auto m-5"
-    action=""
-    method="post"
-    enctype="multipart/form-data">
-    {% csrf_token %}
-    {{form|crispy}}
-    <button type="submit">Add</button>
-</form>
+<div class="col-lg-4 mx-auto m-5">
+    <h1 class="display-4">Add images</h1>
+    <hr>
+    <a href="{% url 'detail' complaint.slug %}">Cancel</a>
+    <br><br>
+    <form action=""
+        method="post"
+        enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form|crispy}}
+        <div class="d-grid">
+            <button type="submit">Add</button>
+        </div>
+    </form>
+</div>
+<br><br>
 {% endblock content %}

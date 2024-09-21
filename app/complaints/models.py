@@ -26,7 +26,7 @@ class Complaint(models.Model):
     )
     phone = models.CharField(max_length=20)
     name = models.CharField(max_length=100)
-    address = models.CharField(max_length=200)
+    address = models.CharField(max_length=200, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     zone = models.ForeignKey(
         Zone,
@@ -39,7 +39,7 @@ class Complaint(models.Model):
         default=timezone.now,
     )
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
-    complaint = models.TextField(blank=True, null=True)
+    complaint = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(
@@ -60,8 +60,10 @@ class Complaint(models.Model):
     def get_absolute_url(self):
         return reverse("detail", kwargs={"slug": self.slug})
 
-    def filename(self):
-        return os.path.basename(self.form.name)
+    def get_contact_info(self):
+        if self.email and self.phone:
+            return f"{self.email} - {self.phone}"
+        return f"{self.phone}"
 
     def __str__(self):
 
@@ -108,7 +110,7 @@ class AcknowledgementLetter(models.Model):
         return os.path.basename(self.letter.name)
 
     def __str__(self):
-        return f"{self.complaint}- {self.created_by}"
+        return f"{self.letter}"
 
 
 class AssignEngineer(models.Model):

@@ -2,8 +2,10 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <div class="m-5">
-        <form class="col-lg-4" action="" method="post">
+    <h1 class="display-4 text-center">Update Profile</h1>
+    <hr>
+    <div class="col-lg-4 mx-auto">
+        <form action="" method="post">
             {% csrf_token %}
             {{form|crispy}}
             <div class="d-grid">

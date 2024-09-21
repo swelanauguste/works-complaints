@@ -10,6 +10,7 @@
     enctype="multipart/form-data">
     {% csrf_token %}
     {{form|crispy}}
+    <br>
     <div class="d-grid">
         <button type="submit">Upload</button>
     </div>
