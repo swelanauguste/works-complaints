@@ -2,7 +2,20 @@
 {% if request.user.is_authenticated %}
 
 <div class="fixed-bottom">
-    <div class="d-flex justify-content-around bg-dark pt-2 pb-lg-2 pb-4 mt-5">
+    <p class="text-end me-3">
+        <a class="text-dark"
+            href="#"><img src="{% static 'icons/top.svg'%}"
+                alt="{% static 'icons/top.svg'%}"></a>
+                <br>
+        <a class="text-dark"
+            href="mailto:kingship.lc@gmail.com">
+            &copy; {% now "Y" %}
+            kingship
+        </a>
+
+
+    </p>
+    <div class="d-flex justify-content-around bg-dark pt-2 pb-lg-2 pb-4">
 
         <a href="#"
             onclick="history.back()"><img src="{% static 'icons/back.svg'%}"

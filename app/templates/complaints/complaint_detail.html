@@ -49,7 +49,9 @@
     <div class="d-flex justify-content-between align-items-center">
         <h1 class="display-4">Details</h1>
         {% if request.user.role == "admin" %}
-        <a href="{% url 'update' complaint.slug %}">edit</a>
+        <a href="{% url 'update' complaint.slug %}">
+            <img src="{% static 'icons/edit.svg' %}" alt="{% static 'icons/edit.svg' %}">
+        </a>
         {% endif %}
     </div>
     <hr>
