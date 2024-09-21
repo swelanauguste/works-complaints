@@ -6,10 +6,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sites.models import Site
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.views.generic import DetailView, UpdateView
-
 from users.models import User
 
 from .forms import UserCustomCreationForm, UserUpdateForm
@@ -20,6 +20,60 @@ from .tokens import account_activation_token
 
 class UserLoginView(auth_views.LoginView):
     template_name = "users/login.html"
+
+    def get(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            messages.info(self.request, f"Your are already logged in {request.user}")
+            return redirect(reverse_lazy("list"))  # Redirect to the home page
+        return super().get(request, *args, **kwargs)
+
+
+class UserChangePasswordView(auth_views.PasswordChangeView):
+    template_name = "users/change_password.html"
+
+
+class UserPasswordChangeDoneView(auth_views.PasswordChangeDoneView):
+    template_name = "users/change_password_done.html"
+
+
+class UserPasswordResetView(auth_views.PasswordResetView):
+    template_name = "users/password_reset.html"
+
+    def get(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            messages.info(self.request, f"Your are already logged in {request.user}")
+            return redirect(reverse_lazy("list"))  # Redirect to the home page
+        return super().get(request, *args, **kwargs)
+
+
+class UserPasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = "users/password_reset_done.html"
+
+    def get(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            messages.info(self.request, f"Your are already logged in {request.user}")
+            return redirect(reverse_lazy("list"))  # Redirect to the home page
+        return super().get(request, *args, **kwargs)
+
+
+class UserPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name = "users/password_reset_confirm.html"
+
+    def get(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            messages.info(self.request, f"Your are already logged in {request.user}")
+            return redirect(reverse_lazy("list"))  # Redirect to the home page
+        return super().get(request, *args, **kwargs)
+
+
+class UserPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    template_name = "users/password_reset_complete.html"
+
+    def get(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            messages.info(self.request, f"Your are already logged in {request.user}")
+            return redirect(reverse_lazy("list"))  # Redirect to the home page
+        return super().get(request, *args, **kwargs)
 
 
 def logout_view(request):

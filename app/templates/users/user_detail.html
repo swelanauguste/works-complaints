@@ -17,8 +17,10 @@
         <p class="border p-2"><strong>e-mail: </strong><a
                         href="mailto:{{user.email}}">{{user.email}}</a></p>
         <p class="border p-2"><strong>Username: </strong>{{user.username}}
-        </p><br><br>
+        </p>
         <br>
+        <p class="text-end"><a href="{% url 'change-password' %}">Change password</a></p>
+        <br><br><br>
         <p class="text-end"> <a href="{% url 'logout' %}"><img
                                 src="{% static 'icons/logout.svg' %}"
                                 alt="{% static 'icons/logout.svg' %}"></a></p>

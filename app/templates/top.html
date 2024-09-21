@@ -1,4 +1,6 @@
 {% load static %}
+
+{% if request.user.is_authenticated %}
 <div class="fixed-top text-bg-dark">
     <div class="container">
 
@@ -14,3 +16,4 @@
         </div>
     </div>
 </div>
+{% endif %}
