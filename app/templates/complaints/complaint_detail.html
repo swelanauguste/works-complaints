@@ -15,7 +15,7 @@
 </section>
 <br><br>
 {% endif %}
-<section class="bg-light p-lg-5">
+<section class="p-lg-5">
     {% if request.user.role != "technician" %}
     {% if request.user.role == "engineer" %}
     <p>Assign this complaint</p>
@@ -118,7 +118,7 @@
         {% endfor %}
 </section>
 <br><br>
-<section class="bg-light p-lg-5">
+<section class="p-lg-5">
     <h1 class="display-4">Images</h1>
     <hr>
     <a class="btn btn-dark text-white"
@@ -173,7 +173,7 @@
 </section>
 {% endif %}
 <br><br>
-<section class="bg-light p-lg-5">
+<section class="p-lg-5">
     <h1 class="display-4">Technical Report</h1>
     <hr>
     {% if request.user.role == "technician" %}

@@ -21,6 +21,8 @@ DEBUG = bool(int(os.environ.get("DEBUG", default=0)))
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*"]
 
+CSRF_TRUSTED_ORIGINS = ["http://localhost:1337"]
+
 
 # Application definition
 
@@ -140,7 +142,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Media files (user-uploaded files)
-MEDIA_URL = "/mediafiles/"
+MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "mediafiles"
 
 # Custom user model
