@@ -24,7 +24,7 @@ class Complaint(models.Model):
     ref = models.CharField(
         max_length=10, unique=True, default=generate_short_id, editable=False
     )
-    phone = models.CharField(max_length=20)
+    phone = models.CharField(max_length=50)
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=200, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)

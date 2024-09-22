@@ -18,9 +18,13 @@ class User(AbstractUser):
         ("technician", "Technician"),
         ("assistant", "Engineering Assistant"),
         ("engineer", "Engineer"),
-        ("admin", "Admin"),
+        ("chief engineer", "Chief Engineer"),
+        ("chief engineer secretary", "Chief Engineer Secretary"),
+        ("deputy chief engineer", "Deputy Chief Engineer"),
+        ("deputy chief engineer secretary", "Deputy Chief Engineer Secretary"),
+        ("complaints officer", "Complaints Officer"),
     )
-    role = models.CharField(max_length=12, choices=ROLE_CHOICES, default="technician")
+    role = models.CharField(max_length=100, choices=ROLE_CHOICES, default="technician")
     phone = models.CharField(max_length=7, null=True, blank=True)
     zone = models.ForeignKey(Zone, on_delete=models.SET_NULL, null=True, blank=True)
 

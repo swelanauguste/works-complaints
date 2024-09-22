@@ -1,20 +1,21 @@
 import csv
 
-from ...models import User
-from django.core.management.base import BaseCommand
 from complaints.models import Zone
+from django.core.management.base import BaseCommand
+
+from ...models import User
 
 
 class Command(BaseCommand):
     help = "Import zones, users, and roles from a CSV file, creating usernames, passwords, and assigning roles."
 
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "csv_file", type=str, help="The path to the CSV file to be imported"
-        )
+    # def add_arguments(self, parser):
+    #     parser.add_argument(
+    #         "csv_file", type=str, help="The path to the CSV file to be imported"
+    #     )
 
     def handle(self, *args, **kwargs):
-        csv_file = kwargs["csv_file"]
+        csv_file = "static/docs/complaints_users.csv"
 
         try:
             with open(csv_file, mode="r") as file:
@@ -23,10 +24,23 @@ class Command(BaseCommand):
                 next(reader, None)
 
                 for row in reader:
-                    zone, role, email = row[0].strip().lower(), row[1].strip().lower(), row[2].strip().lower()
+                    zone, role, email = (
+                        row[0].strip().lower(),
+                        row[1].strip().lower(),
+                        row[2].strip().lower(),
+                    )
 
                     # Validate role
-                    if role not in ["technician", "engineering assistant", "engineer", "admin"]:
+                    if role not in [
+                        "technician",
+                        "engineering assistant",
+                        "engineer",
+                        "chief engineer",
+                        "deputy chief engineer",
+                        "deputy chief engineer secretary",
+                        "chief engineer secretary",
+                        "complaints officer",
+                    ]:
                         self.stdout.write(
                             self.style.ERROR(
                                 f"Invalid role '{role}' for {email}. Skipping."
@@ -40,14 +54,10 @@ class Command(BaseCommand):
                     # Add or get the zone
                     zone, created = Zone.objects.get_or_create(zone=zone)
                     if created:
-                        self.stdout.write(
-                            self.style.SUCCESS(f"Zone {zone} created.")
-                        )
+                        self.stdout.write(self.style.SUCCESS(f"Zone {zone} created."))
                     else:
                         self.stdout.write(
-                            self.style.WARNING(
-                                f"Zone {zone} already exists. Skipping."
-                            )
+                            self.style.WARNING(f"Zone {zone} already exists. Skipping.")
                         )
 
                     # Generate username and password
@@ -55,7 +65,7 @@ class Command(BaseCommand):
                     password = "Password2024"
 
                     # Add or update the user
-                    user, created = User.objects.get_or_create(
+                    user, created = User.objects.update_or_create(
                         email=email,
                         defaults={
                             "username": username,
