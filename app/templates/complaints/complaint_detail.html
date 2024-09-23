@@ -7,7 +7,7 @@
 {% block content %}
 <h1 class="display-4">{{complaint|upper}}</h1>
 <hr>
-{% if request.user.role == "admin" %}
+{% if request.user.role == "complaints officer"%}
 <section class="px-lg-5">
     <a class="btn btn-dark text-white"
         href="{% url 'add-acknowledgement-letter' complaint.slug %}">Acknowledgment
@@ -36,7 +36,7 @@
     </form>
     {% endif %}
 
-    {% if request.user.role == "admin" %}
+    {% if request.user.role == "complaints officer" %}
     <form action="{% url 'assign-engineer' complaint.slug %}"
         method="post">
         {% csrf_token %}
@@ -48,7 +48,7 @@
     {% endif %}
     <div class="d-flex justify-content-between align-items-center">
         <h1 class="display-4">Details</h1>
-        {% if request.user.role == "admin" %}
+        {% if request.user.role == "complaints officer" %}
         <a href="{% url 'update' complaint.slug %}">
             <img src="{% static 'icons/edit.svg' %}" alt="{% static 'icons/edit.svg' %}">
         </a>
@@ -198,7 +198,7 @@
 <section class="p-lg-5">
     <div class="d-flex justify-content-between align-items-center">
         <h1 class="display-4">Complaint Review</h1>
-        {% if request.user.role == "admin" %}
+        {% if request.user.role == "chief engineer" %}
         <a href="{% url 'complaint-review' complaint.slug %}">Review</a>
         {% endif %}
     </div>
