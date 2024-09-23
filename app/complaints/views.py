@@ -390,10 +390,5 @@ def complaint_create(request):
 class ComplaintPhotoCreateView(CreateView):
     model = ComplaintPhoto
     form_class = ComplaintPhotoForm
-    # success_url = "/complaints/success"
 
 
-# class ComplaintInvestigatorCreateView(CreateView):
-#     model = ComplaintInvestigator
-#     fields = "__all__"
-#     # success_url = "/complaints/success"

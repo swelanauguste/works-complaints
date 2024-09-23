@@ -78,23 +78,24 @@ WSGI_APPLICATION = "cf.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
-DATABASES = {
-    "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
-        "USER": os.environ.get("SQL_USER", "user"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
-        "HOST": os.environ.get("SQL_HOST", "localhost"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
+if DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+            "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
+            "USER": os.environ.get("SQL_USER", "user"),
+            "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+            "HOST": os.environ.get("SQL_HOST", "localhost"),
+            "PORT": os.environ.get("SQL_PORT", "5432"),
+        }
+    }
 
 
 # Password validation
@@ -181,53 +182,56 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 DEFAULT_FROM_EMAIL = "complaints.infrastructure@gmail.com"
 
-EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-EMAIL_FILE_PATH = "emails"
+if DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+    EMAIL_FILE_PATH = "emails"
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    # EMAIL_HOST = "mail.govt.lc"
+    EMAIL_HOST = "smtp.gmail.com"
+    EMAIL_HOST_USER = "kingship.lc@gmail.com"
+    EMAIL_HOST_PASSWORD = os.environ.get("PASS")
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_USE_SSL = False
 
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# # EMAIL_HOST = "mail.govt.lc"
-# EMAIL_HOST = "smtp.gmail.com"
-# EMAIL_HOST_USER = "kingship.lc@gmail.com"
-# EMAIL_HOST_PASSWORD = os.environ.get("PASS")
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_USE_SSL = False
 
-# Logging settings
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "{levelname}, {asctime}, {module}, {process:d}, {thread:d}, {message}",
-            "style": "{",
+if DEBUG == False:
+    # Logging settings
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "verbose": {
+                "format": "{levelname}, {asctime}, {module}, {process:d}, {thread:d}, {message}",
+                "style": "{",
+            },
+            "simple": {
+                "format": "{levelname} {message}",
+                "style": "{",
+            },
         },
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
+        "handlers": {
+            "file": {
+                "level": "WARNING",
+                "class": "logging.FileHandler",
+                "filename": BASE_DIR / "debug/debug.log",
+                "formatter": "verbose",
+            },
+            "mail_admins": {
+                "level": "ERROR",
+                "class": "django.utils.log.AdminEmailHandler",
+                "formatter": "verbose",
+            },
         },
-    },
-    "handlers": {
-        "file": {
-            "level": "WARNING",
-            "class": "logging.FileHandler",
-            "filename": BASE_DIR / "debug/debug.log",
-            "formatter": "verbose",
+        "loggers": {
+            "django": {
+                "handlers": ["file", "mail_admins"],
+                "level": "WARNING",
+                "propagate": True,
+            },
         },
-        "mail_admins": {
-            "level": "ERROR",
-            "class": "django.utils.log.AdminEmailHandler",
-            "formatter": "verbose",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["file", "mail_admins"],
-            "level": "WARNING",
-            "propagate": True,
-        },
-    },
-}
+    }
 
 
 # PWA settings

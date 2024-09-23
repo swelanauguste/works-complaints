@@ -5,3 +5,4 @@ from .models import ComplaintReview, EngineerReportDocument, TechnicalReportDocu
 admin.site.register(TechnicalReportDocument)
 admin.site.register(EngineerReportDocument)
 admin.site.register(ComplaintReview)
+ 

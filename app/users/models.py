@@ -6,10 +6,13 @@ class Zone(models.Model):
     district = models.CharField(max_length=100, blank=True)
     zone = models.CharField(max_length=8, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['zone']
 
     def __str__(self):
         if self.district:
-            return f"{self.district.upper()} | {self.zone.upper()}"
+            return f"{self.zone.upper()} - {self.district.upper()}"
         return self.zone.upper()
 
 

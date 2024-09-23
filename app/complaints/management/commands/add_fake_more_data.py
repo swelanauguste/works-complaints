@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # CSV file path
-        csv_file_path = "static/docs/complaints1.csv"
+        csv_file_path = "static/docs/complaints.csv"
 
         try:
             # Open the CSV file with utf-8-sig encoding to handle BOM

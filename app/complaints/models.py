@@ -67,7 +67,7 @@ class Complaint(models.Model):
 
     def __str__(self):
 
-        return f"{self.ref} - {self.zone}"
+        return f"{self.ref.upper()} - {self.zone}"
 
 
 class ComplaintComment(models.Model):
