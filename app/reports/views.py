@@ -25,9 +25,11 @@ def complaint_review(request, slug):
             complaint_review.complaint = complaint
             complaint_review.created_by = request.user
             complaint_review.save()
+            cc_email = form.cleaned_data['cc']
+            print(cc_email, "email")
             review = form.cleaned_data["review"]
             if review:
-                send_approval_email.after_response(complaint)
+                send_approval_email.after_response(complaint, cc_email)
             else:
                 send_non_approval_email.after_response(complaint)
             # Redirect to the complaint detail page after saving all photos

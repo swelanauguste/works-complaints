@@ -6,11 +6,14 @@ from .models import ComplaintReview, EngineerReportDocument, TechnicalReportDocu
 class ComplaintReviewForm(forms.ModelForm):
     class Meta:
         model = ComplaintReview
-        fields = ["date", "comment", "review"]
+        fields = ["date", "comment", "review", "cc"]
         widgets = {
             "complaint": forms.HiddenInput(),
             "comment": forms.Textarea(attrs={"rows": 5}),
             "date": forms.DateInput(attrs={"type": "date"}),
+        }
+        labels = {
+            'cc': 'cc',
         }
 
 

@@ -12,15 +12,14 @@ from users.models import User
 
 
 @after_response.enable
-def send_approval_email(complaint):
+def send_approval_email(complaint, cc_email):
     admins = User.objects.filter(role="admin")
     domain = Site.objects.get_current().domain
     complaint_url = reverse("detail", kwargs={"slug": complaint.slug})
     full_url = f"http://{domain}{complaint_url}"
     recipient_list = []
-    for admin in admins:
-        recipient_list.append(admin.email)
-
+    for cc in cc_email:
+        recipient_list.append(cc.email)
     html_message = render_to_string(
         "reports/emails/project_approval.html",
         {"complaint": complaint, "full_url": full_url},

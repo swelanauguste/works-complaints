@@ -65,10 +65,7 @@ class ComplaintReview(models.Model):
     date = models.DateField(blank=True, null=True, default=timezone.now)
     comment = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-    )
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="+")
     APPROVAL_STATUS_CHOICES = (
         ("pending", "Pending Review"),
         ("not-approved", "Not Approved"),
@@ -77,6 +74,7 @@ class ComplaintReview(models.Model):
     review = models.CharField(
         max_length=12, choices=APPROVAL_STATUS_CHOICES, default="pending"
     )
+    cc = models.ManyToManyField(User)
 
     class Meta:
         ordering = ["-created_at"]
