@@ -21,7 +21,7 @@ DEBUG = bool(int(os.environ.get("DEBUG", default=0)))
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*"]
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost:1337"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:1337", "http://10.137.8.14:1337"]
 
 
 # Application definition
