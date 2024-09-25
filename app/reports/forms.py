@@ -6,7 +6,7 @@ from .models import ComplaintReview, EngineerReportDocument, TechnicalReportDocu
 class ComplaintReviewForm(forms.ModelForm):
     class Meta:
         model = ComplaintReview
-        fields = ["date", "comment", "review", "cc"]
+        fields = ["date", "comment", "review", 'programme', 'amount', "cc"]
         widgets = {
             "complaint": forms.HiddenInput(),
             "comment": forms.Textarea(attrs={"rows": 5}),

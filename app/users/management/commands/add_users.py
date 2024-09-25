@@ -40,6 +40,7 @@ class Command(BaseCommand):
                         "deputy chief engineer secretary",
                         "chief engineer secretary",
                         "complaints officer",
+                        "clerk",
                     ]:
                         self.stdout.write(
                             self.style.ERROR(

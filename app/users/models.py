@@ -18,6 +18,7 @@ class Zone(models.Model):
 
 class User(AbstractUser):
     ROLE_CHOICES = (
+        ("clerk", "Clerk"),
         ("technician", "Technician"),
         ("assistant", "Engineering Assistant"),
         ("engineer", "Engineer"),

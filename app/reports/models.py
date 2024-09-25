@@ -58,6 +58,13 @@ class EngineerReportDocument(models.Model):
         return f"{self.complaint}"
 
 
+class Programme(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name.title()
+
+
 class ComplaintReview(models.Model):
     complaint = models.ForeignKey(
         Complaint, on_delete=models.CASCADE, related_name="complaint_reviews"
@@ -74,6 +81,10 @@ class ComplaintReview(models.Model):
     review = models.CharField(
         max_length=12, choices=APPROVAL_STATUS_CHOICES, default="pending"
     )
+    programme = models.ForeignKey(
+        Programme, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    amount = models.FloatField(blank=True, null=True)
     cc = models.ManyToManyField(User)
 
     class Meta:
