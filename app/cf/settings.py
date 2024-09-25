@@ -189,7 +189,7 @@ else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     # EMAIL_HOST = "mail.govt.lc"
     EMAIL_HOST = "smtp.gmail.com"
-    EMAIL_HOST_USER = "kingship.lc@gmail.com"
+    EMAIL_HOST_USER = "complaints.infrastrcture@gmail.com"
     EMAIL_HOST_PASSWORD = os.environ.get("PASS")
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
@@ -236,7 +236,7 @@ if DEBUG == False:
 
 # PWA settings
 PWA_APP_NAME = "Complaints"
-PWA_APP_DESCRIPTION = "Complaints"
+PWA_APP_DESCRIPTION = "Complaints infrastructure"
 PWA_APP_THEME_COLOR = "#0A0302"
 PWA_APP_BACKGROUND_COLOR = "#ffffff"
 PWA_APP_DISPLAY = "standalone"
