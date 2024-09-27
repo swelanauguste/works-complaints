@@ -16,6 +16,7 @@ python manage.py migrate
 python manage.py createsuperuser --noinput
 python manage.py collectstatic --noinput
 python manage.py add_users
+python manage.py add_zones
 # python manage.py add_fake_data
 # python manage.py add_fake_more_data
 python manage.py add_programmes
