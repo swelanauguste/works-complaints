@@ -50,13 +50,14 @@
     {% include 'complaints/includes/pagination.html' %}
 
     <div class="table-responsive">
-        <table class="table table-hover table-m table-striped">
+        <table class="table table-hover table-sm small table-striped">
             <thead>
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Ref#</th>
                     <th scope="col">Contact</th>
                     <th scope="col">Zone</th>
+                    <th scope="col" class="h-col">Complaints</th>
                 </tr>
             </thead>
             <tbody>
@@ -68,6 +69,7 @@
                     </td>
                     <td>{{ob.get_contact_info}}</td>
                     <td>{{ob.zone}}</td>
+                    <td class="h-col">{{ob.complaint|truncatechars:100|capfirst}}</td>
 
                 </tr>
                 {% empty %}
@@ -80,6 +82,6 @@
         </table>
     </div>
     {% include 'complaints/includes/pagination.html' %}
-
+<br>
 </div>
 {% endblock content %}
