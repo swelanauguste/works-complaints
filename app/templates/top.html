@@ -8,7 +8,7 @@
             <h1 class="display-4"> <a class="text-decoration-none text-white"
                     href="/">Complaints</a></h1>
             <a class="text-white"
-                title="{{request.user|title}} - {{request.user.role|title}}"
+                title="{{request.user}} - {{request.user.role|title}}"
                 href="{% url 'user-detail' %}"><img
                     src="{% static 'icons/profile.svg'%}"
                     alt="{% static 'icons/profile.svg'%"></a>

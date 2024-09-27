@@ -78,6 +78,8 @@ WSGI_APPLICATION = "cf.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+
 if DEBUG:
     DATABASES = {
         "default": {
@@ -189,11 +191,11 @@ else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     # EMAIL_HOST = "mail.govt.lc"
     EMAIL_HOST = "smtp.gmail.com"
-    EMAIL_HOST_USER = "complaints.infrastrcture@gmail.com"
+    EMAIL_HOST_USER = "complaints.infrastructure@gmail.com"
     EMAIL_HOST_PASSWORD = os.environ.get("PASS")
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-    EMAIL_USE_SSL = False
+    # EMAIL_USE_SSL = False
 
 
 if DEBUG == False:
@@ -244,11 +246,11 @@ PWA_APP_SCOPE = "/"
 PWA_APP_ORIENTATION = "any"
 PWA_APP_START_URL = "/"
 PWA_APP_STATUS_BAR_COLOR = "default"
-PWA_APP_ICONS = [{"src": "/static/images/logo.png", "sizes": "160x160"}]
-PWA_APP_ICONS_APPLE = [{"src": "/static/images/logo.png", "sizes": "160x160"}]
+PWA_APP_ICONS = [{"src": "/static/images/logo1.png", "sizes": "160x160"}]
+PWA_APP_ICONS_APPLE = [{"src": "/static/images/logo1.png", "sizes": "160x160"}]
 PWA_APP_SPLASH_SCREEN = [
     {
-        "src": "/static/images/logo.png",
+        "src": "/static/images/logo1.png",
         "media": "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)",
     }
 ]
