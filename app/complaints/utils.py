@@ -53,27 +53,27 @@ def send_technician_assigned_email(technician, complaint):
     send_mail(subject, message, from_email, recipient_list, html_message=html_message)
 
 
-# @after_response.enable
-# def send_ticket_creation_email(ticket, recipient_email):
-#     current_site = Site.objects.get_current()
-#     domain = current_site.domain
+@after_response.enable
+def send_complaint_creation_email(complaint):
+    domain = Site.objects.get_current().domain
 
-#     subject = f"{ticket.summary}"
-#     ticket_url = reverse("ticket-detail", kwargs={"slug": ticket.slug})
-#     full_url = f"http://{domain}{ticket_url}"
+    subject = f"New complaint created {complaint.ref}"
+    complaint_url = reverse("detail", kwargs={"slug": complaint.slug})
+    full_url = f"http://{domain}{complaint_url}"
+    receipt_email_list = []
+    receipt_email_list.append(settings.DEFAULT_FROM_EMAIL)
+    if complaint.email is not None:
+        print(complaint.email)
+        receipt_email_list.append(complaint.email)
+    html_message = render_to_string(
+        "complaints/emails/new_complaint.html", {"complaint": complaint, "full_url": full_url}
+    )
+    plain_message = strip_tags(html_message)
 
-#     html_message = render_to_string(
-#         "tickets/email_template.html", {"ticket": ticket, "full_url": full_url}
-#     )
-#     plain_message = strip_tags(html_message)
-
-#     send_mail(
-#         subject,
-#         plain_message,
-#         settings.DEFAULT_FROM_EMAIL,
-#         [
-#             recipient_email,
-#             settings.DEFAULT_FROM_EMAIL,
-#         ],
-#         html_message=html_message,
-#     )
+    send_mail(
+        subject,
+        plain_message,
+        settings.DEFAULT_FROM_EMAIL,
+        receipt_email_list,
+        html_message=html_message,
+    )

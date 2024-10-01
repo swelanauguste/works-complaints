@@ -31,7 +31,11 @@ from .models import (
     ComplaintPhoto,
     Zone,
 )
-from .utils import send_engineer_assigned_email, send_technician_assigned_email
+from .utils import (
+    send_complaint_creation_email,
+    send_engineer_assigned_email,
+    send_technician_assigned_email,
+)
 
 
 @login_required
@@ -376,7 +380,7 @@ def complaint_create(request):
         if form.is_valid():
             # Save the complaint
             complaint = form.save()
-
+            send_complaint_creation_email.after_response(complaint)
             # Redirect to the detail page of the created complaint or some success URL
             return redirect(reverse("detail", kwargs={"slug": complaint.slug}))
     else:
@@ -390,5 +394,3 @@ def complaint_create(request):
 class ComplaintPhotoCreateView(CreateView):
     model = ComplaintPhoto
     form_class = ComplaintPhotoForm
-
-
