@@ -1,4 +1,3 @@
-import after_response
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth import views as auth_views

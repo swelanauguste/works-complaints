@@ -28,6 +28,11 @@ class User(AbstractUser):
         ("deputy chief engineer secretary", "Deputy Chief Engineer Secretary"),
         ("complaints officer", "Complaints Officer"),
     )
+    can_create_complaints = models.BooleanField(default=True)
+    can_assign_eng = models.BooleanField(default=False)
+    can_assign_eng_asst = models.BooleanField(default=False)
+    can_assign_tech = models.BooleanField(default=False)
+    can_approve_works = models.BooleanField(default=False)
     role = models.CharField(max_length=100, choices=ROLE_CHOICES, default="technician")
     phone = models.CharField(max_length=7, null=True, blank=True)
     zone = models.ForeignKey(Zone, on_delete=models.SET_NULL, null=True, blank=True)

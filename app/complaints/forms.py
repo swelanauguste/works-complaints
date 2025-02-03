@@ -2,6 +2,7 @@ from django import forms
 
 from .models import (
     AcknowledgementLetter,
+    AssignAssistantEngineer,
     AssignEngineer,
     AssignTechnician,
     ChangePriority,
@@ -67,6 +68,25 @@ class AssignTechnicianForm(forms.ModelForm):
         self.fields["technician"].queryset = User.objects.filter(
             role__in=["technician"]
         )
+
+
+class AssignAssistantEngineerForm(forms.ModelForm):
+    class Meta:
+        model = AssignAssistantEngineer
+        fields = [
+            "assistant_engineer",
+        ]
+        widgets = {
+            "complaint": forms.HiddenInput(),
+            "assistant_engineer": forms.Select(
+                attrs={"onchange": "this.form.submit();"}
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(AssignAssistantEngineerForm, self).__init__(*args, **kwargs)
+        # Filter users based on roles 'admin', 'investigator', 'engineer'
+        self.fields["engineer"].queryset = User.objects.filter(role__in=["assistant"])
 
 
 class AssignEngineerForm(forms.ModelForm):

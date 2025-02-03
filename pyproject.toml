@@ -1,0 +1,17 @@
+[project]
+name = "works-complaints"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "crispy-bootstrap5>=2024.10",
+    "django>=5.1.5",
+    "django-pwa>=2.0.1",
+    "gunicorn>=23.0.0",
+    "markdown>=3.7",
+    "pillow>=11.1.0",
+    "psycopg2-binary>=2.9.10",
+    "python-dotenv>=1.0.1",
+    "six>=1.17.0",
+]

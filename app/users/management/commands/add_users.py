@@ -63,7 +63,7 @@ class Command(BaseCommand):
 
                     # Generate username and password
                     username = self.generate_username(email)
-                    password = "Password2024"
+                    password = "Welcome2025"
 
                     # Add or update the user
                     user, created = User.objects.update_or_create(
@@ -116,8 +116,3 @@ class Command(BaseCommand):
         """Generate a username from the email."""
         username = email.split("@")[0]
         return username
-
-    def generate_password(self, length=8):
-        """Generate a random password."""
-        characters = string.ascii_letters + string.digits
-        return "".join(random.choice(characters) for i in range(length))

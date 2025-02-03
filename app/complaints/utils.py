@@ -1,7 +1,7 @@
 import random
 import string
+import threading
 
-import after_response
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
@@ -15,11 +15,11 @@ def generate_short_id():
     characters = string.ascii_letters + string.digits
     return "".join(random.choice(characters) for i in range(length))
 
-@after_response.enable
+
 def send_engineer_assigned_email(engineer, complaint):
     domain = Site.objects.get_current().domain
     complaint_url = reverse("detail", kwargs={"slug": complaint.slug})
-    full_url = f"http://{domain}{complaint_url}"
+    full_url = f"{domain}{complaint_url}"
 
     html_message = render_to_string(
         "complaints/emails/assign_engineer_email.html",
@@ -34,11 +34,10 @@ def send_engineer_assigned_email(engineer, complaint):
     send_mail(subject, message, from_email, recipient_list, html_message=html_message)
 
 
-@after_response.enable
 def send_technician_assigned_email(technician, complaint):
     domain = Site.objects.get_current().domain
     complaint_url = reverse("detail", kwargs={"slug": complaint.slug})
-    full_url = f"http://{domain}{complaint_url}"
+    full_url = f"{domain}{complaint_url}"
 
     html_message = render_to_string(
         "complaints/emails/assign_technician_email.html",
@@ -53,20 +52,20 @@ def send_technician_assigned_email(technician, complaint):
     send_mail(subject, message, from_email, recipient_list, html_message=html_message)
 
 
-@after_response.enable
 def send_complaint_creation_email(complaint):
     domain = Site.objects.get_current().domain
 
     subject = f"New complaint created {complaint.ref}"
     complaint_url = reverse("detail", kwargs={"slug": complaint.slug})
-    full_url = f"http://{domain}{complaint_url}"
+    full_url = f"{domain}{complaint_url}"
     receipt_email_list = []
     receipt_email_list.append(settings.DEFAULT_FROM_EMAIL)
     if complaint.email is not None:
         print(complaint.email)
         receipt_email_list.append(complaint.email)
     html_message = render_to_string(
-        "complaints/emails/new_complaint.html", {"complaint": complaint, "full_url": full_url}
+        "complaints/emails/new_complaint.html",
+        {"complaint": complaint, "full_url": full_url},
     )
     plain_message = strip_tags(html_message)
 

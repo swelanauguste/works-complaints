@@ -126,9 +126,13 @@ def assign_technician(request, slug):
             assign.created_by = request.user  # Ensure created_by is assigned
             assign.save()
             messages.info(request, f"This complaint was assign to {assign.technician}")
-            send_technician_assigned_email.after_response(
-                assign.technician, assign.complaint
-            )
+            send_technician_assigned_email_thread = threading.Thread(
+            target=send_technician_assigned_email, args=(assign.technician, assign.complaint,)
+        )
+            send_technician_assigned_email_thread.start()
+            # send_technician_assigned_email(
+            #     assign.technician, assign.complaint
+            # )
             # form.save_m2m()
             # Redirect to the complaint detail page
             return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
@@ -137,6 +141,30 @@ def assign_technician(request, slug):
 
 @login_required
 def assign_engineer(request, slug):
+    # Get the specific complaint
+    complaint = get_object_or_404(Complaint, slug=slug)
+
+    if request.method == "POST":
+        form = AssignEngineerForm(request.POST)
+        if form.is_valid():
+            assign = form.save(commit=False)
+            assign.complaint = complaint
+            assign.created_by = request.user  # Ensure created_by is assigned
+            assign.save()
+            messages.info(request, f"This complaint was assign to {assign.engineer}")
+            
+            send_engineer_assigned_email(
+                assign.engineer, assign.complaint
+            )
+            # messages.info(request, f"An email was sent to {assign.engineer} at {assign.engineer.email}")
+            # form.save_m2m()
+            # Redirect to the complaint detail page
+            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+    return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+
+
+@login_required
+def assistant_assign_engineer(request, slug):
     # Get the specific complaint
     complaint = get_object_or_404(Complaint, slug=slug)
 

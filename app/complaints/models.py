@@ -40,6 +40,9 @@ class Complaint(models.Model):
     )
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
     complaint = models.TextField(null=True)
+    long_location = models.FloatField(null=True, blank=True)
+    lat_location = models.FloatField(null=True, blank=True)
+    location = models.CharField(max_length=200, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(
@@ -132,6 +135,27 @@ class AssignEngineer(models.Model):
 
     def __str__(self):
         return f"{self.complaint.ref.upper()} assigned to {self.engineer} by {self.created_by}"
+
+
+class AssignAssistantEngineer(models.Model):
+    complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE, null=True)
+    assistant_engineer = models.ForeignKey(
+        User, on_delete=models.SET_NULL, related_name="assistant_engineers", null=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.complaint.ref.upper()} assigned to {self.assistant_engineer} by {self.created_by}"
 
 
 class AssignTechnician(models.Model):
