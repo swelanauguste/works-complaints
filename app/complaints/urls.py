@@ -23,6 +23,11 @@ urlpatterns = [
         name="assign-engineer",
     ),
     path(
+        "assign-engineering-assistant/<slug:slug>/",
+        views.assign_engineering_assistant,
+        name="assign-engineering-assistant",
+    ),
+    path(
         "add-acknowledgement-letter/<slug:slug>/",
         views.add_acknowledgement_letter,
         name="add-acknowledgement-letter",

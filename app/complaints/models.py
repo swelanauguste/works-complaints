@@ -137,10 +137,13 @@ class AssignEngineer(models.Model):
         return f"{self.complaint.ref.upper()} assigned to {self.engineer} by {self.created_by}"
 
 
-class AssignAssistantEngineer(models.Model):
+class AssignEngineeringAssistant(models.Model):
     complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE, null=True)
-    assistant_engineer = models.ForeignKey(
-        User, on_delete=models.SET_NULL, related_name="assistant_engineers", null=True
+    engineering_assistant = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="engineering_assistants",
+        null=True,
     )
     created_by = models.ForeignKey(
         User,
@@ -155,7 +158,7 @@ class AssignAssistantEngineer(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.complaint.ref.upper()} assigned to {self.assistant_engineer} by {self.created_by}"
+        return f"{self.complaint.ref.upper()} assigned to {self.engineering_assistant} by {self.created_by}"
 
 
 class AssignTechnician(models.Model):

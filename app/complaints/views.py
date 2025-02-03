@@ -1,3 +1,5 @@
+import threading
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -14,6 +16,7 @@ from reports.models import (
 from .forms import (
     AcknowledgementLetterForm,
     AssignEngineerForm,
+    AssignEngineeringAssistantForm,
     AssignTechnicianForm,
     ChangePriorityForm,
     ChangeStatusForm,
@@ -24,6 +27,7 @@ from .forms import (
 from .models import (
     AcknowledgementLetter,
     AssignEngineer,
+    AssignEngineeringAssistant,
     AssignTechnician,
     ChangePriority,
     ChangeStatus,
@@ -114,6 +118,49 @@ def change_priority(request, slug):
 
 
 @login_required
+def assign_engineer(request, slug):
+    # Get the specific complaint
+    complaint = get_object_or_404(Complaint, slug=slug)
+
+    if request.method == "POST":
+        form = AssignEngineerForm(request.POST)
+        if form.is_valid():
+            assign = form.save(commit=False)
+            assign.complaint = complaint
+            assign.created_by = request.user  # Ensure created_by is assigned
+            assign.save()
+            messages.info(request, f"This complaint was assign to {assign.engineer}")
+
+            send_engineer_assigned_email(assign.engineer, assign.complaint)
+            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+    return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+
+
+@login_required
+def assign_engineering_assistant(request, slug):
+    # Get the specific complaint
+    complaint = get_object_or_404(Complaint, slug=slug)
+
+    if request.method == "POST":
+        form = AssignEngineeringAssistantForm(request.POST)
+        if form.is_valid():
+            assign = form.save(commit=False)
+            assign.complaint = complaint
+            assign.created_by = request.user  # Ensure created_by is assigned
+            assign.save()
+            messages.info(request, f"This complaint was assign to {assign.engineering_assistant}")
+
+            send_assigned_engineering_assistant_email_thread = threading.Thread(
+                target=send_assigned_engineering_assistant_email,
+                args=(assign.engineering_assistant, assign.complaint),
+            )
+
+            # Redirect to the complaint detail page
+            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+    return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
+
+
+@login_required
 def assign_technician(request, slug):
     # Get the specific complaint
     complaint = get_object_or_404(Complaint, slug=slug)
@@ -127,59 +174,16 @@ def assign_technician(request, slug):
             assign.save()
             messages.info(request, f"This complaint was assign to {assign.technician}")
             send_technician_assigned_email_thread = threading.Thread(
-            target=send_technician_assigned_email, args=(assign.technician, assign.complaint,)
-        )
+                target=send_technician_assigned_email,
+                args=(
+                    assign.technician,
+                    assign.complaint,
+                ),
+            )
             send_technician_assigned_email_thread.start()
             # send_technician_assigned_email(
             #     assign.technician, assign.complaint
             # )
-            # form.save_m2m()
-            # Redirect to the complaint detail page
-            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
-    return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
-
-
-@login_required
-def assign_engineer(request, slug):
-    # Get the specific complaint
-    complaint = get_object_or_404(Complaint, slug=slug)
-
-    if request.method == "POST":
-        form = AssignEngineerForm(request.POST)
-        if form.is_valid():
-            assign = form.save(commit=False)
-            assign.complaint = complaint
-            assign.created_by = request.user  # Ensure created_by is assigned
-            assign.save()
-            messages.info(request, f"This complaint was assign to {assign.engineer}")
-            
-            send_engineer_assigned_email(
-                assign.engineer, assign.complaint
-            )
-            # messages.info(request, f"An email was sent to {assign.engineer} at {assign.engineer.email}")
-            # form.save_m2m()
-            # Redirect to the complaint detail page
-            return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
-    return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
-
-
-@login_required
-def assistant_assign_engineer(request, slug):
-    # Get the specific complaint
-    complaint = get_object_or_404(Complaint, slug=slug)
-
-    if request.method == "POST":
-        form = AssignEngineerForm(request.POST)
-        if form.is_valid():
-            assign = form.save(commit=False)
-            assign.complaint = complaint
-            assign.created_by = request.user  # Ensure created_by is assigned
-            assign.save()
-            messages.info(request, f"This complaint was assign to {assign.engineer}")
-            send_engineer_assigned_email.after_response(
-                assign.engineer, assign.complaint
-            )
-            # messages.info(request, f"An email was sent to {assign.engineer} at {assign.engineer.email}")
             # form.save_m2m()
             # Redirect to the complaint detail page
             return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
@@ -323,6 +327,9 @@ def complaint_detail(request, slug):
 
     try:
         assigned_engineer = AssignEngineer.objects.filter(complaint=complaint).first()
+        assigned_engineering_assistant = AssignEngineeringAssistant.objects.filter(
+            complaint=complaint
+        ).first()
         assigned_technician = AssignTechnician.objects.filter(
             complaint=complaint
         ).first()
@@ -334,6 +341,11 @@ def complaint_detail(request, slug):
 
     # Extract the actual engineer and technician from the assignment objects
     engineer = assigned_engineer.engineer if assigned_engineer else None
+    engineering_assistant = (
+        assigned_engineering_assistant.engineering_assistant
+        if assigned_engineering_assistant
+        else None
+    )
     technician = assigned_technician.technician if assigned_technician else None
     # review = review.technician if assigned_technician else None
 
@@ -355,6 +367,9 @@ def complaint_detail(request, slug):
     assign_engineer_form = AssignEngineerForm(
         initial={"complaint": complaint, "engineer": engineer}
     )
+    assign_engineering_assistant_form = AssignEngineeringAssistantForm(
+        initial={"complaint": complaint, "engineering_assistant": engineering_assistant}
+    )
     assign_technician_form = AssignTechnicianForm(
         initial={"complaint": complaint, "technician": technician}
     )
@@ -368,6 +383,7 @@ def complaint_detail(request, slug):
         "change_status_form": change_status_form,
         "change_priority_form": change_priority_form,
         "assign_engineer_form": assign_engineer_form,
+        "assign_engineering_assistant_form": assign_engineering_assistant_form,
         "assign_technician_form": assign_technician_form,
         "comments": comments,
         "review": review,

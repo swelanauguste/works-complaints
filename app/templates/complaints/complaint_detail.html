@@ -16,43 +16,55 @@
 <br><br>
 {% endif %}
 <section class="p-lg-5">
-    {% if request.user.role != "technician" %}
-    {% if request.user.role == "engineer" %}
-    <p>Assign this complaint</p>
-    <form action="{% url 'change-status' complaint.slug %}"
-        method="post">
-        {% csrf_token %}
-        {{change_status_form|crispy}}
-    </form>
-    <form action="{% url 'change-priority' complaint.slug %}"
-        method="post">
-        {% csrf_token %}
-        {{change_priority_form|crispy}}
-    </form>
-    <form action="{% url 'assign-technician' complaint.slug %}"
-        method="post">
-        {% csrf_token %}
-        {{assign_technician_form|crispy}}
-    </form>
-    {% endif %}
+    <div class="row">
+        <div class="col-lg-3">
+            <form action="{% url 'change-status' complaint.slug %}"
+                method="post">
+                {% csrf_token %}
+                {{change_status_form|crispy}}
+            </form>
+        </div>
+        <div class="col-lg-3">
+            <form action="{% url 'change-priority' complaint.slug %}"
+                method="post">
+                {% csrf_token %}
+                {{change_priority_form|crispy}}
+            </form>
+        </div>
+    </div>
+    <hr>
 
-    {% if request.user.role == "complaints officer" %}
-    <form action="{% url 'assign-engineer' complaint.slug %}"
-        method="post">
-        {% csrf_token %}
-        {{assign_engineer_form|crispy}}
-    </form>
-    <br><br>
 
-    {% endif %}
-    {% endif %}
+    <div class="row col-lg-3">
+        <form action="{% url 'assign-engineer' complaint.slug %}"
+            method="post">
+            {% csrf_token %}
+            {{assign_engineer_form|crispy}}
+        </form>
+    </div>
+
+
+    <div class="row col-lg-3">
+        <form action="{% url 'assign-engineering-assistant' complaint.slug %}"
+            method="post">
+            {% csrf_token %}
+            {{assign_engineering_assistant_form|crispy}}
+        </form>
+    </div>
+
+    <div class="row col-lg-3">
+        <form action="{% url 'assign-technician' complaint.slug %}"
+            method="post">
+            {% csrf_token %}
+            {{assign_technician_form|crispy}}
+        </form>
+    </div>
     <div class="d-flex justify-content-between align-items-center">
         <h1 class="display-4">Details</h1>
-        {% if request.user.role == "complaints officer" %}
         <a href="{% url 'update' complaint.slug %}">
-            <img src="{% static 'icons/edit.svg' %}" alt="{% static 'icons/edit.svg' %}">
+            <img src="{% static 'icons/edit.svg' %}"
+                alt="{% static 'icons/edit.svg' %}">
         </a>
-        {% endif %}
     </div>
     <hr>
     <p title="zone"><strong>Zone:
@@ -152,16 +164,13 @@
     </div>
 </section>
 <br><br>
-{% if request.user.role != "technician" %}
 <section class="p-lg-5">
     <h1 class="display-4">Engineering Report</h1>
     <hr>
 
-    {% if request.user.role == "engineer" %}
     <a class="btn btn-dark text-white"
         href="{% url 'add-engineer-report-document' complaint.slug %}">Attach
         document</a>
-    {% endif %}
     <br><br>
     {% for doc in complaint.engineering_documents.all %}
     <p><a href="{{doc.document.url}}"
@@ -173,17 +182,14 @@
     </p>
     {% endfor %}
 </section>
-{% endif %}
 <br><br>
 <section class="p-lg-5">
     <h1 class="display-4">Technical Report</h1>
     <hr>
-    {% if request.user.role == "technician" %}
 
     <a class="btn btn-dark text-white"
         href="{% url 'add-technical-report-document' complaint.slug %}">Attach
         document</a>
-    {% endif %}
     {% for doc in complaint.technical_documents.all %}
     <p><a href="{{doc.document.url}}"
             target="_blank">{{doc.document|cut:"technical_report_documents/"|lower}}</a>

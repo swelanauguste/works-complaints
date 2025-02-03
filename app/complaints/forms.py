@@ -2,8 +2,8 @@ from django import forms
 
 from .models import (
     AcknowledgementLetter,
-    AssignAssistantEngineer,
     AssignEngineer,
+    AssignEngineeringAssistant,
     AssignTechnician,
     ChangePriority,
     ChangeStatus,
@@ -70,23 +70,25 @@ class AssignTechnicianForm(forms.ModelForm):
         )
 
 
-class AssignAssistantEngineerForm(forms.ModelForm):
+class AssignEngineeringAssistantForm(forms.ModelForm):
     class Meta:
-        model = AssignAssistantEngineer
+        model = AssignEngineeringAssistant
         fields = [
-            "assistant_engineer",
+            "engineering_assistant",
         ]
         widgets = {
             "complaint": forms.HiddenInput(),
-            "assistant_engineer": forms.Select(
+            "engineering_assistant": forms.Select(
                 attrs={"onchange": "this.form.submit();"}
             ),
         }
 
     def __init__(self, *args, **kwargs):
-        super(AssignAssistantEngineerForm, self).__init__(*args, **kwargs)
+        super(AssignEngineeringAssistantForm, self).__init__(*args, **kwargs)
         # Filter users based on roles 'admin', 'investigator', 'engineer'
-        self.fields["engineer"].queryset = User.objects.filter(role__in=["assistant"])
+        self.fields["engineering_assistant"].queryset = User.objects.filter(
+            role__in=["assistant"]
+        )
 
 
 class AssignEngineerForm(forms.ModelForm):
