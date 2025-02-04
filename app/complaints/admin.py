@@ -2,9 +2,8 @@ from django.contrib import admin
 
 from .models import (
     AcknowledgementLetter,
-    AssignEngineer,
+    AssignEngineer,  # Category,
     AssignTechnician,
-    Category,
     ChangePriority,
     ChangeStatus,
     Complaint,
@@ -15,7 +14,7 @@ from .models import (
 admin.site.register(ComplaintPhoto)
 admin.site.register(ComplaintComment)
 admin.site.register(AcknowledgementLetter)
-admin.site.register(Category)
+# admin.site.register(Category)
 admin.site.register(ChangeStatus)
 admin.site.register(ChangePriority)
 
@@ -29,15 +28,28 @@ admin.site.register(Complaint, ComplaintAdmin)
 
 
 class AssignEngineerAdmin(admin.ModelAdmin):
-    list_display = ["complaint", "engineer", "created_by",]
-    list_editable = ["engineer",]
+    list_display = [
+        "complaint",
+        "engineer",
+        "created_by",
+    ]
+    list_editable = [
+        "engineer",
+    ]
 
 
 admin.site.register(AssignEngineer, AssignEngineerAdmin)
 
+
 class AssignTechnicianAdmin(admin.ModelAdmin):
-    list_display = ["complaint", "technician", "created_by",]
-    list_editable = ["technician",]
+    list_display = [
+        "complaint",
+        "technician",
+        "created_by",
+    ]
+    list_editable = [
+        "technician",
+    ]
 
 
 admin.site.register(AssignTechnician, AssignTechnicianAdmin)

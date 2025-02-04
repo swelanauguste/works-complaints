@@ -160,12 +160,3 @@ class ComplaintForm(forms.ModelForm):
         }
 
 
-# class ComplaintInvestigatorForm(forms.ModelForm):
-#     class Meta:
-#         model = ComplaintInvestigator
-#         fields = "__all__"
-#         exclude = ["created_at", "created_by"]
-#         widgets = {
-#             "complaint": forms.HiddenInput(),
-#             "investigator": forms.Select(attrs={"onchange": "this.form.submit()"}),
-#         }

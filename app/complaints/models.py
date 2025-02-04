@@ -9,15 +9,12 @@ from users.models import User, Zone
 from .utils import generate_short_id
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+class TimeStampMixin(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name_plural = "categories"
-
-    def __str__(self):
-        return f"{self.name}"
+        abstract = True
 
 
 class Complaint(models.Model):
@@ -40,8 +37,8 @@ class Complaint(models.Model):
     )
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
     complaint = models.TextField(null=True)
-    long_location = models.FloatField(null=True, blank=True)
-    lat_location = models.FloatField(null=True, blank=True)
+    lat_location = models.FloatField("latitude", null=True, blank=True)
+    long_location = models.FloatField("longitude", null=True, blank=True)
     location = models.CharField(max_length=200, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -218,57 +215,3 @@ class ChangePriority(models.Model):
 
     def __str__(self):
         return f"{self.complaint} {self.status}"
-
-
-# class Report(models.Model):
-#     complaint = models.ForeignKey(
-#         ComplaintInvestigator,
-#         on_delete=models.CASCADE,
-#         related_name="reports",
-#         null=True,
-#     )
-#     comment = models.TextField()
-#     file = models.FieldFile(upload_to="complaints", null=True, blank=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-
-#     def __str__(self):
-#         return f"{self.complaint.name}- {self.investigator.investigator}"
-
-
-# class ReportComment(models.Model):
-#     complaint = models.ForeignKey(Report, on_delete=models.CASCADE)
-#     comment = models.TextField()
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-
-#     def __str__(self):
-#         return self.complaint
-
-
-# class ComplaintAction(models.Model):
-#     STATUS_CHOICES = (
-#         ("open", "Open"),
-#         ("in_progress", "In Progress"),
-#         ("resolved", "Resolved"),
-#         ("closed", "Closed"),
-#     )
-#     PRIORITY_CHOICES = (
-#         ("low", "Low"),
-#         ("medium", "Medium"),
-#         ("high", "High"),
-#         ("urgent", "Urgent"),
-#     )
-#     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="open")
-#     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default="low")
-#     report = models.ForeignKey(Report, on_delete=models.CASCADE, null=True)
-#     is_approved = models.BooleanField(null=True, blank=True)
-#     comment = models.TextField(null=True, blank=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-
-#     class Meta:
-#         ordering = ["-created_at"]
-
-#     def __str__(self):
-#         return f"{self.complaint} {self.is_approved}"

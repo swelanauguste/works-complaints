@@ -1,6 +1,5 @@
 import random
 import string
-import threading
 
 from django.conf import settings
 from django.contrib.sites.models import Site
@@ -16,39 +15,69 @@ def generate_short_id():
     return "".join(random.choice(characters) for i in range(length))
 
 
-def send_engineer_assigned_email(engineer, complaint):
+def engineer_assigned_email(instance):
     domain = Site.objects.get_current().domain
-    complaint_url = reverse("detail", kwargs={"slug": complaint.slug})
+    complaint_url = reverse("detail", kwargs={"slug": instance.complaint.slug})
     full_url = f"{domain}{complaint_url}"
 
     html_message = render_to_string(
-        "complaints/emails/assign_engineer_email.html",
-        {"complaint": complaint, "full_url": full_url, "engineer": engineer},
+        "complaints/emails/engineer_assigned_email.html",
+        {
+            "complaint": instance.complaint,
+            "full_url": full_url,
+            "engineer": instance.engineer,
+        },
     )
     plain_message = strip_tags(html_message)
 
     subject = "New Complaint Assigned"
     message = plain_message
     from_email = settings.DEFAULT_FROM_EMAIL  # Replace with your email
-    recipient_list = [engineer.email]
+    recipient_list = [instance.engineer.email]
     send_mail(subject, message, from_email, recipient_list, html_message=html_message)
 
 
-def send_technician_assigned_email(technician, complaint):
+def engineering_assistant_assigned_email(instance):
     domain = Site.objects.get_current().domain
-    complaint_url = reverse("detail", kwargs={"slug": complaint.slug})
+    complaint_url = reverse("detail", kwargs={"slug": instance.complaint.slug})
     full_url = f"{domain}{complaint_url}"
 
     html_message = render_to_string(
-        "complaints/emails/assign_technician_email.html",
-        {"complaint": complaint, "full_url": full_url, "technician": technician},
+        "complaints/emails/engineering_assistant_assigned_email.html",
+        {
+            "complaint": instance.complaint,
+            "full_url": full_url,
+            "engineering_assistant": instance.engineering_assistant,
+        },
     )
     plain_message = strip_tags(html_message)
 
     subject = "New Complaint Assigned"
     message = plain_message
     from_email = settings.DEFAULT_FROM_EMAIL  # Replace with your email
-    recipient_list = [technician.email]
+    recipient_list = [instance.engineering_assistant.email]
+    send_mail(subject, message, from_email, recipient_list, html_message=html_message)
+
+
+def send_technician_assigned_email(instance):
+    domain = Site.objects.get_current().domain
+    complaint_url = reverse("detail", kwargs={"slug": instance.complaint.slug})
+    full_url = f"{domain}{complaint_url}"
+
+    html_message = render_to_string(
+        "complaints/emails/technician_assigned_email.html",
+        {
+            "complaint": instance.complaint,
+            "full_url": full_url,
+            "technician": instance.technician,
+        },
+    )
+    plain_message = strip_tags(html_message)
+
+    subject = "New Complaint Assigned"
+    message = plain_message
+    from_email = settings.DEFAULT_FROM_EMAIL  # Replace with your email
+    recipient_list = [instance.technician.email]
     send_mail(subject, message, from_email, recipient_list, html_message=html_message)
 
 

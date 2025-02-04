@@ -1,5 +1,3 @@
-import threading
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -34,11 +32,6 @@ from .models import (
     Complaint,
     ComplaintPhoto,
     Zone,
-)
-from .utils import (
-    send_complaint_creation_email,
-    send_engineer_assigned_email,
-    send_technician_assigned_email,
 )
 
 
@@ -130,8 +123,6 @@ def assign_engineer(request, slug):
             assign.created_by = request.user  # Ensure created_by is assigned
             assign.save()
             messages.info(request, f"This complaint was assign to {assign.engineer}")
-
-            send_engineer_assigned_email(assign.engineer, assign.complaint)
             return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
     return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
 
@@ -148,13 +139,9 @@ def assign_engineering_assistant(request, slug):
             assign.complaint = complaint
             assign.created_by = request.user  # Ensure created_by is assigned
             assign.save()
-            messages.info(request, f"This complaint was assign to {assign.engineering_assistant}")
-
-            send_assigned_engineering_assistant_email_thread = threading.Thread(
-                target=send_assigned_engineering_assistant_email,
-                args=(assign.engineering_assistant, assign.complaint),
+            messages.info(
+                request, f"This complaint was assign to {assign.engineering_assistant}"
             )
-
             # Redirect to the complaint detail page
             return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
     return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
@@ -173,18 +160,7 @@ def assign_technician(request, slug):
             assign.created_by = request.user  # Ensure created_by is assigned
             assign.save()
             messages.info(request, f"This complaint was assign to {assign.technician}")
-            send_technician_assigned_email_thread = threading.Thread(
-                target=send_technician_assigned_email,
-                args=(
-                    assign.technician,
-                    assign.complaint,
-                ),
-            )
-            send_technician_assigned_email_thread.start()
-            # send_technician_assigned_email(
-            #     assign.technician, assign.complaint
-            # )
-            # form.save_m2m()
+    
             # Redirect to the complaint detail page
             return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
     return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
@@ -379,6 +355,7 @@ def complaint_detail(request, slug):
         "photos": photos,
         "letters": letters,
         "assigned_engineer": assigned_engineer,
+        "assigned_engineering_assistant": assigned_engineering_assistant,
         "assigned_technician": assigned_technician,
         "change_status_form": change_status_form,
         "change_priority_form": change_priority_form,
@@ -424,7 +401,7 @@ def complaint_create(request):
         if form.is_valid():
             # Save the complaint
             complaint = form.save()
-            send_complaint_creation_email.after_response(complaint)
+            # send_complaint_creation_email(complaint)
             # Redirect to the detail page of the created complaint or some success URL
             return redirect(reverse("detail", kwargs={"slug": complaint.slug}))
     else:

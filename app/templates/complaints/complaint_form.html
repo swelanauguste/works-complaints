@@ -4,16 +4,54 @@
 
 
 {% block content %}
-<div class="col-lg-4 mx-auto">
-  <form method="post">
+<div class="container-fluid">
+  <form method="post" enctype="multipart/form-data">
     <h1 class="display-4">Create</h1>
     <hr>
     {% csrf_token %}
-    {{form|crispy}}
-    <div class="d-grid">
+    <div class="row">
+      <span>{{ form.date|as_crispy_field }}</span>
+    </div>
+    <div class="row">
+      <span class="col-lg-6">
+        {{ form.phone|as_crispy_field }}
+      </span>
+      <span class="col-lg-6">
+        {{ form.name|as_crispy_field }}
+      </span>
+    </div>
+    <div class="row">
+      <span class="col-lg-6">
+        {{ form.address|as_crispy_field }}
+      </span>
+      <span class="col-lg-6">
+        {{ form.email|as_crispy_field }}
+      </span>
+    </div>
+    <div class="row">
+      <span>{{ form.complaint|as_crispy_field }}</span>
+    </div>
+    <div class="row">
+      <span class="col-lg-3">
+        {{ form.zone|as_crispy_field }}
+      </span>
+      <span class="col-lg-3">
+        {{ form.lat_location|as_crispy_field }}
+      </span>
+      <span class="col-lg-3">
+        {{ form.long_location|as_crispy_field }}
+      </span>
+      <span class="col-lg-3">
+        {{ form.location|as_crispy_field }}
+      </span>
+    </div>
+    <div class="row">
+      <span> {{ form.form|as_crispy_field }}</span>
+    </div>
+    <div class="d-grid mt-3">
       <button type="submit">Submit</button><br><br>
     </div>
   </form>
 </div>
-<br><br>
+
 {% endblock content %}

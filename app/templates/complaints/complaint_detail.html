@@ -35,6 +35,7 @@
     <hr>
 
 
+    {% if request.user.can_assign_eng %}
     <div class="row col-lg-3">
         <form action="{% url 'assign-engineer' complaint.slug %}"
             method="post">
@@ -42,8 +43,9 @@
             {{assign_engineer_form|crispy}}
         </form>
     </div>
+    {% endif %}
 
-
+    {% if request.user.can_assign_eng_asst %}
     <div class="row col-lg-3">
         <form action="{% url 'assign-engineering-assistant' complaint.slug %}"
             method="post">
@@ -51,7 +53,9 @@
             {{assign_engineering_assistant_form|crispy}}
         </form>
     </div>
+    {% endif %}
 
+    {% if request.user.can_assign_tech %}
     <div class="row col-lg-3">
         <form action="{% url 'assign-technician' complaint.slug %}"
             method="post">
@@ -59,6 +63,8 @@
             {{assign_technician_form|crispy}}
         </form>
     </div>
+    {% endif %}
+
     <div class="d-flex justify-content-between align-items-center">
         <h1 class="display-4">Details</h1>
         <a href="{% url 'update' complaint.slug %}">
@@ -97,17 +103,38 @@
 
     {% endif %}
 
-    <p> <strong>Engineer:</strong><br>
+
+    {% if assigned_engineer %}
+    <p> <strong>Engineer:</strong>
         <a class="badge bg-success text-white"
             href="">{{assigned_engineer.engineer}}</a>
     </p>
-    <p> <strong>Technician:</strong><br>
+    {% endif %}
+
+
+    {% if assigned_engineering_assistant %}
+    <p> <strong>Engineering Assistant:</strong>
+        <a class="badge bg-primary text-white"
+            href="">{{assigned_engineering_assistant.engineering_assistant}}</a>
+    </p>
+    {% endif %}
+
+
+    {% if assigned_technician %}
+    <p> <strong>Technician:</strong>
         <a class="badge bg-warning text-dark"
             href="">{{assigned_technician.technician}}</a>
     </p>
+    {% endif %}
+
+
     <hr>
+    <p><strong>Location: </strong><a target="_blank"
+            href="https://www.google.com/maps/@{{complaint.lat_location}},{{complaint.long_location}}">{{complaint.lat_location}},{{complaint.long_location}}
+            - {{complaint.location}}</a></p>
     <p title="complaint"><strong>Complaint:
         </strong><br>{{complaint.complaint|capfirst }}</p>
+
 
 </section>
 <br><br>
