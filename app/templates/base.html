@@ -28,16 +28,17 @@
         type="image/x-icon">
 </head>
 
-<body class="container min-vh-100">
+<body class="container-fluid min-vh-100">
     {% include 'top.html' %}
 
     {% include 'messages.html' %}
-    <div class="py-5 my-5">
+    <div class="py-5 my-5 min-vh-100">
         {% block content %}
 
         {% endblock content %}
     </div>
     {% include 'bottom.html' %}
+    {% include 'footer2.html' %}
 
     <script src="{% static 'js/app.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>

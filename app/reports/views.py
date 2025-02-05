@@ -62,10 +62,12 @@ def add_technical_report_document(request, slug):
         files = request.FILES.getlist("documents")  # Get the list of uploaded files
         if form.is_valid():
             comment = form.cleaned_data["comment"]
+            # form.instance.created_by = request.user
             for file in files:
                 # Create a new ComplaintPhoto for each file
                 document_instance = TechnicalReportDocument(
                     complaint=complaint,
+                    created_by=request.user,
                     comment=comment,
                     document=file,  # Save each file individually
                 )
@@ -97,6 +99,7 @@ def add_engineer_report_document(request, slug):
                 # Create a new ComplaintPhoto for each file
                 document_instance = EngineerReportDocument(
                     complaint=complaint,
+                    created_by=request.user,
                     comment=comment,
                     document=file,  # Save each file individually
                 )

@@ -1,255 +1,254 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% load humanize %}
 
 {% load crispy_forms_tags %}
 
 {% block content %}
-<h1 class="display-4">{{complaint|upper}}</h1>
-<hr>
-{% if request.user.role == "complaints officer"%}
-<section class="px-lg-5">
-    <a class="btn btn-dark text-white"
-        href="{% url 'add-acknowledgement-letter' complaint.slug %}">Acknowledgment
-        letter</a>
-</section>
-<br><br>
-{% endif %}
-<section class="p-lg-5">
-    <div class="row">
-        <div class="col-lg-3">
-            <form action="{% url 'change-status' complaint.slug %}"
-                method="post">
-                {% csrf_token %}
-                {{change_status_form|crispy}}
-            </form>
-        </div>
-        <div class="col-lg-3">
-            <form action="{% url 'change-priority' complaint.slug %}"
-                method="post">
-                {% csrf_token %}
-                {{change_priority_form|crispy}}
-            </form>
-        </div>
-    </div>
+<div class="container">
+    <h1 class="display-4">{{complaint|upper}}</h1>
     <hr>
-
-
-    {% if request.user.can_assign_eng %}
-    <div class="row col-lg-3">
-        <form action="{% url 'assign-engineer' complaint.slug %}"
-            method="post">
-            {% csrf_token %}
-            {{assign_engineer_form|crispy}}
-        </form>
-    </div>
-    {% endif %}
-
-    {% if request.user.can_assign_eng_asst %}
-    <div class="row col-lg-3">
-        <form action="{% url 'assign-engineering-assistant' complaint.slug %}"
-            method="post">
-            {% csrf_token %}
-            {{assign_engineering_assistant_form|crispy}}
-        </form>
-    </div>
-    {% endif %}
-
-    {% if request.user.can_assign_tech %}
-    <div class="row col-lg-3">
-        <form action="{% url 'assign-technician' complaint.slug %}"
-            method="post">
-            {% csrf_token %}
-            {{assign_technician_form|crispy}}
-        </form>
-    </div>
-    {% endif %}
-
-    <div class="d-flex justify-content-between align-items-center">
-        <h1 class="display-4">Details</h1>
-        <a href="{% url 'update' complaint.slug %}">
-            <img src="{% static 'icons/edit.svg' %}"
-                alt="{% static 'icons/edit.svg' %}">
-        </a>
-    </div>
-    <hr>
-    <p title="zone"><strong>Zone:
-        </strong>{{complaint.zone|capfirst }}
-    </p>
-    <p title="address"><strong>Address: </strong>
-        {{complaint.address|capfirst }}</p>
-    <p title="phone"><strong>Phone: </strong><a
-            href="tel:{{complaint.phone }}">
-            {{complaint.phone }}</a></p>
-    <p title="email"><strong>email: </strong><a
-            href="mailto:{{complaint.email }}">
-            {{complaint.email|default:"no email" }}</a></p>
-
-    <p title="date"><strong>Date:
-        </strong>{{complaint.date}}({{complaint.created_at|naturaltime}})
-    </p>
-    {% if complaint.form %}
-    <p title="Complaints form"><strong>Form: </strong><a target="_blank"
-            href="{{complaint.form.url}}">{{complaint.form|lower}}</a>
-    </p>
-    {% endif %}
-    {% if complaint.letters.first.letter %}
-    <p title="acknowledgment letter">
-        <strong>Acknowledgment Letter: </strong>
-        <a target="_blank"
-            href="{{complaint.letters.first.letter.url }}">
-            {{complaint.letters.first|lower }}</a>
-    </p>
-
-    {% endif %}
-
-
-    {% if assigned_engineer %}
-    <p> <strong>Engineer:</strong>
-        <a class="badge bg-success text-white"
-            href="">{{assigned_engineer.engineer}}</a>
-    </p>
-    {% endif %}
-
-
-    {% if assigned_engineering_assistant %}
-    <p> <strong>Engineering Assistant:</strong>
-        <a class="badge bg-primary text-white"
-            href="">{{assigned_engineering_assistant.engineering_assistant}}</a>
-    </p>
-    {% endif %}
-
-
-    {% if assigned_technician %}
-    <p> <strong>Technician:</strong>
-        <a class="badge bg-warning text-dark"
-            href="">{{assigned_technician.technician}}</a>
-    </p>
-    {% endif %}
-
-
-    <hr>
-    <p><strong>Location: </strong><a target="_blank"
-            href="https://www.google.com/maps/@{{complaint.lat_location}},{{complaint.long_location}}">{{complaint.lat_location}},{{complaint.long_location}}
-            - {{complaint.location}}</a></p>
-    <p title="complaint"><strong>Complaint:
-        </strong><br>{{complaint.complaint|capfirst }}</p>
-
-
-</section>
-<br><br>
-<section class="p-lg-5">
-    <h1 class="display-4">Comments</h1>
-    <hr>
-    <form action=""
-        method="post">
-        {% csrf_token %}
-        {{comment_form|crispy}}
-
-        <button type="submit">Submit</button>
-    </form><br>
-    <div style="overflow-x: hidden;max-height: 25rem;">
-        {% for comment in comments %}
-        <p>{{comment.comment}}</p>
-        <p class="text-muted small text-end">
-            {{comment.created_by}}-{{comment.created_at}}</p>
-        <hr>
-        {% empty %}
-        <p class="text-center">No comments yet</p>
-        {% endfor %}
-</section>
-<br><br>
-<section class="p-lg-5">
-    <h1 class="display-4">Images</h1>
-    <hr>
-    <a class="btn btn-dark text-white"
-        href="{% url 'create-complaint-photo' complaint.slug %}">Add
-        images</a>
+    {% if request.user.role == "complaints officer"%}
+    <section class="px-lg-5">
+        <a class="btn btn-dark text-white"
+            href="{% url 'add-acknowledgement-letter' complaint.slug %}">Acknowledgment
+            letter</a>
+    </section>
     <br><br>
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% for img in complaint.photos.all %}
-        <div class="col">
-            <div class="card h-100">
-                <a target="_blank"
-                    href="{{img.photo.url}}">
-                    <img src="{{img.photo.url}}"
-                        class="card-img-top"
-                        alt="{{img.photo.url}}"></a>
-                <div class="card-body">
-                    <h5 class="card-title"></h5>
-                    <p class="card-text">{{img.comment|capfirst}}</p>
-                </div>
-                <hr>
-                <p class="text-end me-2"><a
-                        href="{% url 'delete-complaint-photo' img.pk %}"><img
-                            src="{% static 'icons/delete.svg'%}"
-                            alt="{% static 'icons/delete.svg'%}"></a>
-                </p>
+    {% endif %}
+    <section class="p-lg-5">
+        <div class="row">
+            <div class="col-lg-3">
+                <form action="{% url 'change-status' complaint.slug %}"
+                    method="post">
+                    {% csrf_token %}
+                    {{change_status_form|crispy}}
+                </form>
+            </div>
+            <div class="col-lg-3">
+                <form action="{% url 'change-priority' complaint.slug %}"
+                    method="post">
+                    {% csrf_token %}
+                    {{change_priority_form|crispy}}
+                </form>
             </div>
         </div>
-        {% endfor %}
-    </div>
-</section>
-<br><br>
-<section class="p-lg-5">
-    <h1 class="display-4">Engineering Report</h1>
-    <hr>
+        <hr>
 
-    <a class="btn btn-dark text-white"
-        href="{% url 'add-engineer-report-document' complaint.slug %}">Attach
-        document</a>
-    <br><br>
-    {% for doc in complaint.engineering_documents.all %}
-    <p><a href="{{doc.document.url}}"
-            target="_blank">{{doc.document|cut:"engineer_report_documents/"|lower}}</a>
-        <a href="{% url 'delete-engineering-document' doc.pk %}"><img
-                src="{% static 'icons/delete.svg'%}"
-                alt="{% static 'icons/delete.svg'%}"></a>
-    <p>{{doc.comment|capfirst}}</p>
-    </p>
-    {% endfor %}
-</section>
-<br><br>
-<section class="p-lg-5">
-    <h1 class="display-4">Technical Report</h1>
-    <hr>
 
-    <a class="btn btn-dark text-white"
-        href="{% url 'add-technical-report-document' complaint.slug %}">Attach
-        document</a>
-    {% for doc in complaint.technical_documents.all %}
-    <p><a href="{{doc.document.url}}"
-            target="_blank">{{doc.document|cut:"technical_report_documents/"|lower}}</a>
-        <a href="{% url 'delete-technical-document' doc.pk %}"><img
-                src="{% static 'icons/delete.svg'%}"
-                alt="{% static 'icons/delete.svg'%}"></a>
-    <p>{{doc.comment|capfirst}}</p>
-    </p>
-    {% endfor %}
-</section>
-<br><br>
-<section class="p-lg-5">
-    <div class="d-flex justify-content-between align-items-center">
-        <h1 class="display-4">Complaint Review</h1>
-        {% if request.user.role == "chief engineer" %}
-        <a href="{% url 'complaint-review' complaint.slug %}">Review</a>
+        {% if request.user.can_assign_eng %}
+        <div class="row col-lg-3">
+            <form action="{% url 'assign-engineer' complaint.slug %}"
+                method="post">
+                {% csrf_token %}
+                {{assign_engineer_form|crispy}}
+            </form>
+        </div>
         {% endif %}
-    </div>
-    <hr>
 
-    {% if review %}
-    <p
-        class="btn {% if review.review == 'approved' %} btn-success {% else %} btn-warning {% endif %}">
-        {{review.review|upper }}
-    </p>
-    <p>{{review.comment}}</p>
-    <p class="text-muted small text-end">{{review.created_by}} -
-        {{review.created_at}}</p>
-    {% else %}
-    <p class="btn btn-warning">
-        Pending review
-    </p>
-    {% endif %}
-</section>
+        {% if request.user.can_assign_eng_asst %}
+        <div class="row col-lg-3">
+            <form
+                action="{% url 'assign-engineering-assistant' complaint.slug %}"
+                method="post">
+                {% csrf_token %}
+                {{assign_engineering_assistant_form|crispy}}
+            </form>
+        </div>
+        {% endif %}
+
+        {% if request.user.can_assign_tech %}
+        <div class="row col-lg-3">
+            <form action="{% url 'assign-technician' complaint.slug %}"
+                method="post">
+                {% csrf_token %}
+                {{assign_technician_form|crispy}}
+            </form>
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="display-4">Details</h1>
+            <a href="{% url 'update' complaint.slug %}">
+                <img src="{% static 'icons/edit.svg' %}"
+                    alt="{% static 'icons/edit.svg' %}">
+            </a>
+        </div>
+        <hr>
+        <p title="zone"><strong>Zone:
+            </strong>{{complaint.zone|capfirst }}
+        </p>
+        <p title="address"><strong>Address: </strong>
+            {{complaint.address|capfirst }}</p>
+        <p title="phone"><strong>Phone: </strong><a
+                href="tel:{{complaint.phone }}">
+                {{complaint.phone }}</a></p>
+        <p title="email"><strong>email: </strong><a
+                href="mailto:{{complaint.email }}">
+                {{complaint.email|default:"no email" }}</a></p>
+
+        <p title="date"><strong>Date:
+            </strong>{{complaint.date}}({{complaint.created_at|naturaltime}})
+        </p>
+        {% if complaint.form %}
+        <p title="Complaints form"><strong>Form: </strong><a target="_blank"
+                href="{{complaint.form.url}}">{{complaint.form|lower}}</a>
+        </p>
+        {% endif %}
+        {% if complaint.letters.first.letter %}
+        <p title="acknowledgment letter">
+            <strong>Acknowledgment Letter: </strong>
+            <a target="_blank"
+                href="{{complaint.letters.first.letter.url }}">
+                {{complaint.letters.first|lower }}</a>
+        </p>
+
+        {% endif %}
+
+
+        {% if assigned_engineer %}
+        <p> <strong>Engineer:</strong>
+            <a class="badge bg-success text-white"
+                href="">{{assigned_engineer.engineer}}</a>
+        </p>
+        {% endif %}
+
+
+        {% if assigned_engineering_assistant %}
+        <p> <strong>Engineering Assistant:</strong>
+            <a class="badge bg-primary text-white"
+                href="">{{assigned_engineering_assistant.engineering_assistant}}</a>
+        </p>
+        {% endif %}
+
+
+        {% if assigned_technician %}
+        <p> <strong>Technician:</strong>
+            <a class="badge bg-warning text-dark"
+                href="">{{assigned_technician.technician}}</a>
+        </p>
+        {% endif %}
+        <hr>
+        <p><strong>Location: </strong><a target="_blank"
+                href="https://www.google.com/maps/@{{complaint.lat_location}},{{complaint.long_location}}">{{complaint.lat_location}},{{complaint.long_location}}
+                - {{complaint.location}}</a></p>
+        <p title="complaint"><strong>Complaint:
+            </strong><br>{{complaint.complaint|capfirst }}</p>
+    </section>
+    <section class="p-lg-5">
+        <h1 class="display-4">Comments</h1>
+        <hr>
+        <form action=""
+            method="post">
+            {% csrf_token %}
+            {{comment_form|crispy}}
+
+            <button type="submit">Submit</button>
+        </form><br>
+        <div style="overflow-x: hidden;max-height: 25rem;">
+            {% for comment in comments %}
+            <p>{{comment.comment}}</p>
+            <p class="text-muted small text-end">
+                {{comment.created_by}} {{comment.created_at}}({{comment.created_at|naturaltime}})</p>
+            <hr>
+            {% empty %}
+            <p class="text-center">No comments yet</p>
+            {% endfor %}
+    </section>
+    <section class="p-lg-5">
+        <h1 class="display-4">Images</h1>
+        <hr>
+        <a class="btn btn-dark text-white"
+            href="{% url 'create-complaint-photo' complaint.slug %}">Add
+            images</a>
+        <br><br>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for img in complaint.photos.all %}
+            <div class="col">
+                <div class="card h-100">
+                    <a target="_blank"
+                        href="{{img.photo.url}}">
+                        <img src="{{img.photo.url}}"
+                            class="card-img-top"
+                            alt="{{img.photo.url}}"></a>
+                    <div class="card-body">
+                        <h5 class="card-title"></h5>
+                        <p class="card-text">{{img.comment|capfirst}}</p>
+                    </div>
+                    <hr>
+                    <p class="text-end me-2"><a
+                            href="{% url 'delete-complaint-photo' img.pk %}"><img
+                                src="{% static 'icons/delete.svg'%}"
+                                alt="{% static 'icons/delete.svg'%}"></a>
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    <br><br>
+    <section class="p-lg-5">
+        <h1 class="display-4">Engineering Report</h1>
+        <hr>
+        <a class="btn btn-dark text-white"
+            href="{% url 'add-engineer-report-document' complaint.slug %}">Attach
+            document</a>
+        <br><br>
+        {% for doc in complaint.engineering_documents.all %}
+        <p><a href="{{doc.document.url}}"
+                target="_blank">{{doc.document|cut:"engineer_report_documents/"|lower}}</a>
+            <a href="{% url 'delete-engineering-document' doc.pk %}"><img
+                    src="{% static 'icons/delete.svg'%}"
+                    alt="{% static 'icons/delete.svg'%}"></a>
+        <p>{{doc.comment|capfirst}}</p>
+        <span class="small text-muted">{{doc.created_by}} {{doc.created_at}}</span>
+        </p>
+        <hr><br>
+        {% endfor %}
+    </section>
+    <br><br>
+    <section class="p-lg-5">
+        <h1 class="display-4">Technical Report</h1>
+        <hr>
+        <a class="btn btn-dark text-white"
+            href="{% url 'add-technical-report-document' complaint.slug %}">Attach
+            document</a>
+            <br><br>
+        {% for doc in complaint.technical_documents.all %}
+        <p><a href="{{doc.document.url}}"
+                target="_blank">{{doc.document|cut:"technical_report_documents/"|lower}}</a>
+            <a href="{% url 'delete-technical-document' doc.pk %}"><img
+                    src="{% static 'icons/delete.svg'%}"
+                    alt="{% static 'icons/delete.svg'%}"></a>
+        <p>{{doc.comment|capfirst}} {{doc.created_by|lower}}</p>
+        </p>
+        {% endfor %}
+    </section>
+    <br><br>
+    <section class="p-lg-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="display-4">Complaint Review</h1>
+            {% if request.user.role == "chief engineer" %}
+            <a href="{% url 'complaint-review' complaint.slug %}">Review</a>
+            {% endif %}
+        </div>
+        <hr>
+
+        {% if review %}
+        <p
+            class="btn {% if review.review == 'approved' %} btn-success {% else %} btn-warning {% endif %}">
+            {{review.review|upper }}
+        </p>
+        <p>{{review.comment}}</p>
+        <p class="text-muted small text-end">{{review.created_by}} -
+            {{review.created_at}}</p>
+        {% else %}
+        <p class="btn btn-warning">
+            Pending review
+        </p>
+        {% endif %}
+    </section>
+</div>
 <br><br><br>
 {% endblock content %}
