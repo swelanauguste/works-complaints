@@ -58,6 +58,33 @@ class EngineerReportDocument(models.Model):
         return f"{self.complaint}"
 
 
+class EngineeringAssistantReportDocument(models.Model):
+    complaint = models.ForeignKey(
+        Complaint,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="engineering_assistant_documents",
+    )
+    report_date = models.DateField(blank=True, null=True, default=timezone.now)
+    # report_status = models.CharField(
+    #     max_length=6, choices=[("open", "Open"), ("closed", "Closed")], default="open"
+    # )
+    document = models.FileField(
+        upload_to="engineering_assistant_report_documents/", null=True, blank=True
+    )
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="engineer_assistant_documents_created_by",
+        null=True,
+    )
+
+    def __str__(self):
+        return f"{self.complaint}"
+
+
 class Programme(models.Model):
     name = models.CharField(max_length=100, unique=True)
 

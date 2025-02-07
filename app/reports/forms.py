@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import ComplaintReview, EngineerReportDocument, TechnicalReportDocument
+from .models import ComplaintReview, EngineerReportDocument, TechnicalReportDocument, EngineeringAssistantReportDocument
 
 
 class ComplaintReviewForm(forms.ModelForm):
@@ -41,6 +41,20 @@ class TechnicalReportDocumentForm(forms.ModelForm):
 
     class Meta:
         model = TechnicalReportDocument
+        fields = ["report_date", "documents", "comment"]
+        widgets = {
+            "report": forms.HiddenInput(),
+            "comment": forms.Textarea(attrs={"rows": 5}),
+            "report_date": forms.DateInput(attrs={"type": "date"}),
+        }
+
+
+class EngineeringAssistantReportDocumentForm(forms.ModelForm):
+    documents = MultipleFileField(label="Select files", required=False)
+    comment = forms.CharField(widget=forms.Textarea, required=False)
+
+    class Meta:
+        model = EngineeringAssistantReportDocument
         fields = ["report_date", "documents", "comment"]
         widgets = {
             "report": forms.HiddenInput(),

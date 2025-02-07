@@ -150,7 +150,8 @@
             {% for comment in comments %}
             <p>{{comment.comment}}</p>
             <p class="text-muted small text-end">
-                {{comment.created_by}} {{comment.created_at}}({{comment.created_at|naturaltime}})</p>
+                {{comment.created_by}}
+                {{comment.created_at}}({{comment.created_at|naturaltime}})</p>
             <hr>
             {% empty %}
             <p class="text-center">No comments yet</p>
@@ -187,34 +188,16 @@
             {% endfor %}
         </div>
     </section>
+
+    {% if request.user.is_technician %}
     <br><br>
     <section class="p-lg-5">
-        <h1 class="display-4">Engineering Report</h1>
-        <hr>
-        <a class="btn btn-dark text-white"
-            href="{% url 'add-engineer-report-document' complaint.slug %}">Attach
-            document</a>
-        <br><br>
-        {% for doc in complaint.engineering_documents.all %}
-        <p><a href="{{doc.document.url}}"
-                target="_blank">{{doc.document|cut:"engineer_report_documents/"|lower}}</a>
-            <a href="{% url 'delete-engineering-document' doc.pk %}"><img
-                    src="{% static 'icons/delete.svg'%}"
-                    alt="{% static 'icons/delete.svg'%}"></a>
-        <p>{{doc.comment|capfirst}}</p>
-        <span class="small text-muted">{{doc.created_by}} {{doc.created_at}}</span>
-        </p>
-        <hr><br>
-        {% endfor %}
-    </section>
-    <br><br>
-    <section class="p-lg-5">
-        <h1 class="display-4">Technical Report</h1>
+        <h1 class="display-4">Technician's Report</h1>
         <hr>
         <a class="btn btn-dark text-white"
             href="{% url 'add-technical-report-document' complaint.slug %}">Attach
             document</a>
-            <br><br>
+        <br><br>
         {% for doc in complaint.technical_documents.all %}
         <p><a href="{{doc.document.url}}"
                 target="_blank">{{doc.document|cut:"technical_report_documents/"|lower}}</a>
@@ -225,10 +208,60 @@
         </p>
         {% endfor %}
     </section>
+    {% endif %}
+
+    {% if request.user.is_engineering_assistant %}
     <br><br>
     <section class="p-lg-5">
+        <h1 class="display-4">Engineering Assistant's Report</h1>
+        <hr>
+        <a class="btn btn-dark text-white"
+            href="{% url 'add-engineering-assistant-report-document' complaint.slug %}">Attach
+            document</a>
+        <br><br>
+        {% for doc in complaint.engineering_assistant_documents.all %}
+        <p><a href="{{doc.document.url}}"
+                target="_blank">{{doc.document|cut:"engineer_report_documents/"|lower}}</a>
+            <a href="{% url 'delete-engineering-assistant-document' doc.pk %}"><img
+                    src="{% static 'icons/delete.svg'%}"
+                    alt="{% static 'icons/delete.svg'%}"></a>
+        <p>{{doc.comment|capfirst}}</p>
+        <span class="small text-muted">{{doc.created_by}}
+            {{doc.created_at}}</span>
+        </p>
+        <hr><br>
+        {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if request.user.is_engineer %}
+    <br><br>
+    <section class="p-lg-5">
+        <h1 class="display-4">Engineer's Report</h1>
+        <hr>
+        <a class="btn btn-dark text-white"
+            href="{% url 'add-engineering-assistant-report-document' complaint.slug %}">Attach
+            document</a>
+        <br><br>
+        {% for doc in complaint.engineering_documents.all %}
+        <p><a href="{{doc.document.url}}"
+                target="_blank">{{doc.document|cut:"engineer_report_documents/"|lower}}</a>
+            <a href="{% url 'delete-engineering-document' doc.pk %}"><img
+                    src="{% static 'icons/delete.svg'%}"
+                    alt="{% static 'icons/delete.svg'%}"></a>
+        <p>{{doc.comment|capfirst}}</p>
+        <span class="small text-muted">{{doc.created_by}}
+            {{doc.created_at}}</span>
+        </p>
+        <hr><br>
+        {% endfor %}
+    </section>
+    {% endif %}
+
+
+    <section class="p-lg-5">
         <div class="d-flex justify-content-between align-items-center">
-            <h1 class="display-4">Complaint Review</h1>
+            <h1 class="display-4">Chief Engineer Review</h1>
             {% if request.user.role == "chief engineer" %}
             <a href="{% url 'complaint-review' complaint.slug %}">Review</a>
             {% endif %}

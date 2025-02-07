@@ -9,6 +9,7 @@ from reports.models import (
     ComplaintReview,
     EngineerReportDocument,
     TechnicalReportDocument,
+    EngineeringAssistantReportDocument
 )
 
 from .forms import (
@@ -49,6 +50,17 @@ def delete_complaint_photo_document(request, pk):
 @login_required
 def delete_technical_document(request, pk):
     document = get_object_or_404(TechnicalReportDocument, pk=pk)
+    complaint_slug = document.complaint.slug
+
+    # Delete the document
+    document.delete()
+
+    return redirect(reverse_lazy("detail", kwargs={"slug": complaint_slug}))
+
+
+@login_required
+def delete_engineering_assistant_document(request, pk):
+    document = get_object_or_404(EngineeringAssistantReportDocument, pk=pk)
     complaint_slug = document.complaint.slug
 
     # Delete the document
@@ -249,6 +261,8 @@ def complaint_list(request):
         ).distinct()
     if request.user.role == "engineer":
         complaints = complaints.filter(assignengineer__engineer=request.user).distinct()
+    if request.user.role == "assistant":
+        complaints = complaints.filter(assignengineeringassistant__engineering_assistant=request.user).distinct()
     # assigned_engineer = AssignEngineer.objects.filter(complaint=complaint).first()
     # category_filter = request.GET.get("category", None)
     # if category_filter:

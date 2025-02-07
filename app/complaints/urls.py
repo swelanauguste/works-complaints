@@ -48,6 +48,11 @@ urlpatterns = [
         name="delete-engineering-document",
     ),
     path(
+        "delete-engineering-assistant-document/<int:pk>/",
+        views.delete_engineering_assistant_document,
+        name="delete-engineering-assistant-document",
+    ),
+    path(
         "delete-technical-document/<int:pk>/",
         views.delete_technical_document,
         name="delete-technical-document",
