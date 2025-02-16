@@ -6,33 +6,31 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container">
-    <h1 class="display-4">{{complaint|upper}}</h1>
-    <hr>
+<div class="col-lg-6 mx-auto py-5">
+    <div class="text-bg-dark p-3">
+        <h1 class="display-4">{{complaint|upper}}</h1>
+    </div>
     {% if request.user.role == "complaints officer"%}
     <section class="px-lg-5">
         <a class="btn btn-dark text-white"
             href="{% url 'add-acknowledgement-letter' complaint.slug %}">Acknowledgment
             letter</a>
     </section>
-    <br><br>
     {% endif %}
-    <section class="p-lg-5">
-        <div class="row">
-            <div class="col-lg-3">
-                <form action="{% url 'change-status' complaint.slug %}"
-                    method="post">
-                    {% csrf_token %}
-                    {{change_status_form|crispy}}
-                </form>
-            </div>
-            <div class="col-lg-3">
-                <form action="{% url 'change-priority' complaint.slug %}"
-                    method="post">
-                    {% csrf_token %}
-                    {{change_priority_form|crispy}}
-                </form>
-            </div>
+    <section class="p-lg-5 col-12 bg-white">
+        <div class="col-lg-3">
+            <form action="{% url 'change-status' complaint.slug %}"
+                method="post">
+                {% csrf_token %}
+                {{change_status_form|crispy}}
+            </form>
+        </div>
+        <div class="col-lg-3">
+            <form action="{% url 'change-priority' complaint.slug %}"
+                method="post">
+                {% csrf_token %}
+                {{change_priority_form|crispy}}
+            </form>
         </div>
         <hr>
 
@@ -84,9 +82,13 @@
         <p title="phone"><strong>Phone: </strong><a
                 href="tel:{{complaint.phone }}">
                 {{complaint.phone }}</a></p>
+
+        {% if complaint.email %}
         <p title="email"><strong>email: </strong><a
                 href="mailto:{{complaint.email }}">
                 {{complaint.email|default:"no email" }}</a></p>
+        {% endif %}
+
 
         <p title="date"><strong>Date:
             </strong>{{complaint.date}}({{complaint.created_at|naturaltime}})
@@ -130,8 +132,12 @@
         </p>
         {% endif %}
         <hr>
+        <!-- ALT url for maps -->
+        <!-- <p><strong>Location: </strong><a target="_blank"
+            href="https://maps.google.com/?ll={{complaint.lat_location}},{{complaint.long_location}}">{{complaint.lat_location}},{{complaint.long_location}}
+            - {{complaint.location}}</a></p> -->
         <p><strong>Location: </strong><a target="_blank"
-                href="https://www.google.com/maps/@{{complaint.lat_location}},{{complaint.long_location}}">{{complaint.lat_location}},{{complaint.long_location}}
+                href="https://www.google.com/maps/search/?api=1&query={{complaint.lat_location}},{{complaint.long_location}}">{{complaint.lat_location}},{{complaint.long_location}}
                 - {{complaint.location}}</a></p>
         <p title="complaint"><strong>Complaint:
             </strong><br>{{complaint.complaint|capfirst }}</p>
@@ -156,72 +162,82 @@
             {% empty %}
             <p class="text-center">No comments yet</p>
             {% endfor %}
-    </section>
-    <section class="p-lg-5">
+    </section><br><br>
+    <section class="p-lg-5 bg-white">
         <h1 class="display-4">Images</h1>
         <hr>
         <a class="btn btn-dark text-white"
             href="{% url 'create-complaint-photo' complaint.slug %}">Add
             images</a>
         <br><br>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col-lg-8 mx-auto"
+            style="overflow-x: hidden;max-height: 50rem;">
             {% for img in complaint.photos.all %}
             <div class="col">
-                <div class="card h-100">
+                <div
+                    class="bg-light px-3 py-2 border border-dark rounded-4 m-3">
                     <a target="_blank"
                         href="{{img.photo.url}}">
+                        {% if ".pdf" in img.photo.url %}
+                        <a href="{{img.photo.url}}">{{img.photo.url}}</a>
+                        {% else %}
                         <img src="{{img.photo.url}}"
-                            class="card-img-top"
-                            alt="{{img.photo.url}}"></a>
-                    <div class="card-body">
-                        <h5 class="card-title"></h5>
-                        <p class="card-text">{{img.comment|capfirst}}</p>
-                    </div>
-                    <hr>
-                    <p class="text-end me-2"><a
-                            href="{% url 'delete-complaint-photo' img.pk %}"><img
-                                src="{% static 'icons/delete.svg'%}"
-                                alt="{% static 'icons/delete.svg'%}"></a>
-                    </p>
+                            class="card-img-top border border-primary rounded-4 border-2"
+                            alt="{{img.photo.url}}"
+                            height="">
+                        {% endif %}
+                        <div class="card-body">
+                            <br>
+                            <p class="card-text">{{img.comment|capfirst}}</p>
+                        </div>
+                        <hr>
+                        <p class="text-end me-2">
+                            <a
+                                href="{% url 'delete-complaint-photo' img.pk %}"><img
+                                    src="{% static 'icons/delete.svg'%}"
+                                    alt="{% static 'icons/delete.svg'%}"></a>
+                        </p>
                 </div>
             </div>
             {% endfor %}
         </div>
+        <br><br>
     </section>
-
-    {% if request.user.is_technician %}
-    <br><br>
-    <section class="p-lg-5">
+    <section class="col p-lg-5">
         <h1 class="display-4">Technician's Report</h1>
         <hr>
+        {% if request.user.is_technician %}
+
         <a class="btn btn-dark text-white"
             href="{% url 'add-technical-report-document' complaint.slug %}">Attach
             document</a>
         <br><br>
+        {% endif %}
+
         {% for doc in complaint.technical_documents.all %}
         <p><a href="{{doc.document.url}}"
-                target="_blank">{{doc.document|cut:"technical_report_documents/"|lower}}</a>
+                target="_blank">{{doc.document|cut:"technical_report_documents/"|lower|truncatechars:40}}</a>
             <a href="{% url 'delete-technical-document' doc.pk %}"><img
                     src="{% static 'icons/delete.svg'%}"
                     alt="{% static 'icons/delete.svg'%}"></a>
         <p>{{doc.comment|capfirst}} {{doc.created_by|lower}}</p>
-        </p>
+        </p><hr>
         {% endfor %}
+        <br><br>
     </section>
-    {% endif %}
-
-    {% if request.user.is_engineering_assistant %}
-    <br><br>
-    <section class="p-lg-5">
+    <section class="col p-lg-5 bg-white">
         <h1 class="display-4">Engineering Assistant's Report</h1>
         <hr>
+        {% if request.user.is_engineering_assistant %}
         <a class="btn btn-dark text-white"
             href="{% url 'add-engineering-assistant-report-document' complaint.slug %}">Attach
             document</a>
+        {% endif %}
         <br><br>
+
         {% for doc in complaint.engineering_assistant_documents.all %}
         <p><a href="{{doc.document.url}}"
-                target="_blank">{{doc.document|cut:"engineer_report_documents/"|lower}}</a>
+                target="_blank">{{doc.document|cut:"engineering_assistant_report_documents/"|lower|truncatechars:40}}</a>
             <a href="{% url 'delete-engineering-assistant-document' doc.pk %}"><img
                     src="{% static 'icons/delete.svg'%}"
                     alt="{% static 'icons/delete.svg'%}"></a>
@@ -231,21 +247,21 @@
         </p>
         <hr><br>
         {% endfor %}
+        <br><br>
     </section>
-    {% endif %}
-
-    {% if request.user.is_engineer %}
-    <br><br>
-    <section class="p-lg-5">
+    <section class="col p-lg-5">
         <h1 class="display-4">Engineer's Report</h1>
         <hr>
+        {% if request.user.is_engineer %}
         <a class="btn btn-dark text-white"
-            href="{% url 'add-engineering-assistant-report-document' complaint.slug %}">Attach
+            href="{% url 'add-engineer-report-document' complaint.slug %}">Attach
             document</a>
+        {% endif %}
         <br><br>
+
         {% for doc in complaint.engineering_documents.all %}
         <p><a href="{{doc.document.url}}"
-                target="_blank">{{doc.document|cut:"engineer_report_documents/"|lower}}</a>
+                target="_blank">{{doc.document|cut:"engineer_report_documents/"|lower|truncatechars:40}}</a>
             <a href="{% url 'delete-engineering-document' doc.pk %}"><img
                     src="{% static 'icons/delete.svg'%}"
                     alt="{% static 'icons/delete.svg'%}"></a>
@@ -255,11 +271,9 @@
         </p>
         <hr><br>
         {% endfor %}
+        <br><br>
     </section>
-    {% endif %}
-
-
-    <section class="p-lg-5">
+    <section class="col p-lg-5 bg-white">
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="display-4">Chief Engineer Review</h1>
             {% if request.user.role == "chief engineer" %}
@@ -277,11 +291,9 @@
         <p class="text-muted small text-end">{{review.created_by}} -
             {{review.created_at}}</p>
         {% else %}
-        <p class="btn btn-warning">
-            Pending review
-        </p>
+        <p class="fw-bold text-center">Pending review</p>
         {% endif %}
+        <br><br>
     </section>
 </div>
-<br><br><br>
 {% endblock content %}

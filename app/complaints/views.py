@@ -249,6 +249,7 @@ def complaint_list(request):
             | Q(complaint__icontains=search_query)
             | Q(phone__icontains=search_query)
             | Q(ref__iexact=search_query)
+            # | Q(ref__iexact=search_query.lower())
         )
 
     # Filtering by Foreign Keys (Zone and Category in this case)

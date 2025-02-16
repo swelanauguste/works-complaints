@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "crispy-bootstrap5>=2024.10",
+    "django-browser-reload>=1.18.0",
     "django>=5.1.5",
     "django-pwa>=2.0.1",
     "gunicorn>=23.0.0",

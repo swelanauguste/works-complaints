@@ -9,7 +9,7 @@ urlpatterns = [
         name="add-technical-report-document",
     ),
     path(
-        "add-engineer-report-document/<slug:slug>",
+        "add-engineering-assistant-report-document/<slug:slug>",
         views.add_engineering_assistant_report_document,
         name="add-engineering-assistant-report-document",
     ),
