@@ -16,12 +16,11 @@
                     href="{% url 'list' %}">reset</a></p>
         </div>
         <br>
-        {% if request.user.role == "admin" %}
+        {% if request.user.role == "chief engineer" %}
         <div class="col-lg-3 mx-auto mt-2 mt-lg-0">
             <select id="filter-zones"
                 name="zone"
                 onchange="this.form.submit()">
-                <option value="">All Zones</option>
                 <option value="">All Zones</option>
                 {% for zone in zones %}
                 <option value="{{ zone.id }}"
