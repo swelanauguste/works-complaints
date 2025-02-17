@@ -10,63 +10,8 @@
     <div class="text-bg-dark p-3">
         <h1 class="display-4">{{complaint|upper}}</h1>
     </div>
-    {% if request.user.role == "complaints officer"%}
-    <section class="px-lg-5">
-        <a class="btn btn-dark text-white"
-            href="{% url 'add-acknowledgement-letter' complaint.slug %}">Acknowledgment
-            letter</a>
-    </section>
-    {% endif %}
-    <section class="p-lg-5 col-12 bg-white">
-        <div class="col-lg-3">
-            <form action="{% url 'change-status' complaint.slug %}"
-                method="post">
-                {% csrf_token %}
-                {{change_status_form|crispy}}
-            </form>
-        </div>
-        <div class="col-lg-3">
-            <form action="{% url 'change-priority' complaint.slug %}"
-                method="post">
-                {% csrf_token %}
-                {{change_priority_form|crispy}}
-            </form>
-        </div>
-        <hr>
-
-
-        {% if request.user.can_assign_eng %}
-        <div class="row col-lg-3">
-            <form action="{% url 'assign-engineer' complaint.slug %}"
-                method="post">
-                {% csrf_token %}
-                {{assign_engineer_form|crispy}}
-            </form>
-        </div>
-        {% endif %}
-
-        {% if request.user.can_assign_eng_asst %}
-        <div class="row col-lg-3">
-            <form
-                action="{% url 'assign-engineering-assistant' complaint.slug %}"
-                method="post">
-                {% csrf_token %}
-                {{assign_engineering_assistant_form|crispy}}
-            </form>
-        </div>
-        {% endif %}
-
-        {% if request.user.can_assign_tech %}
-        <div class="row col-lg-3">
-            <form action="{% url 'assign-technician' complaint.slug %}"
-                method="post">
-                {% csrf_token %}
-                {{assign_technician_form|crispy}}
-            </form>
-        </div>
-        {% endif %}
-
-        <div class="d-flex justify-content-between align-items-center">
+    <section class="col bg-white p-3">
+        <div class="d-flex justify-content-between align-items-center mt-3">
             <h1 class="display-4">Details</h1>
             <a href="{% url 'update' complaint.slug %}">
                 <img src="{% static 'icons/edit.svg' %}"
@@ -89,7 +34,6 @@
                 {{complaint.email|default:"no email" }}</a></p>
         {% endif %}
 
-
         <p title="date"><strong>Date:
             </strong>{{complaint.date}}({{complaint.created_at|naturaltime}})
         </p>
@@ -105,9 +49,7 @@
                 href="{{complaint.letters.first.letter.url }}">
                 {{complaint.letters.first|lower }}</a>
         </p>
-
         {% endif %}
-
 
         {% if assigned_engineer %}
         <p> <strong>Engineer:</strong>
@@ -116,14 +58,12 @@
         </p>
         {% endif %}
 
-
         {% if assigned_engineering_assistant %}
         <p> <strong>Engineering Assistant:</strong>
             <a class="badge bg-primary text-white"
                 href="">{{assigned_engineering_assistant.engineering_assistant}}</a>
         </p>
         {% endif %}
-
 
         {% if assigned_technician %}
         <p> <strong>Technician:</strong>
@@ -134,15 +74,76 @@
         <hr>
         <!-- ALT url for maps -->
         <!-- <p><strong>Location: </strong><a target="_blank"
-            href="https://maps.google.com/?ll={{complaint.lat_location}},{{complaint.long_location}}">{{complaint.lat_location}},{{complaint.long_location}}
-            - {{complaint.location}}</a></p> -->
+        href="https://maps.google.com/?ll={{complaint.lat_location}},{{complaint.long_location}}">{{complaint.lat_location}},{{complaint.long_location}}
+        - {{complaint.location}}</a></p> -->
         <p><strong>Location: </strong><a target="_blank"
                 href="https://www.google.com/maps/search/?api=1&query={{complaint.lat_location}},{{complaint.long_location}}">{{complaint.lat_location}},{{complaint.long_location}}
                 - {{complaint.location}}</a></p>
         <p title="complaint"><strong>Complaint:
             </strong><br>{{complaint.complaint|capfirst }}</p>
     </section>
-    <section class="p-lg-5">
+
+    <section class="p-3 col">
+        {% if request.user.role == "complaints officer" %}
+        <div class="mb-3">
+            <a class=""
+                href="{% url 'add-acknowledgement-letter' complaint.slug %}">Acknowledgment
+                letter</a>
+        </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-lg-5">
+                <form action="{% url 'change-status' complaint.slug %}"
+                    method="post">
+                    {% csrf_token %}
+                    {{change_status_form|crispy}}
+                </form>
+            </div>
+            <div class="col-lg-5">
+                <form action="{% url 'change-priority' complaint.slug %}"
+                    method="post">
+                    {% csrf_token %}
+                    {{change_priority_form|crispy}}
+                </form>
+            </div>
+        </div>
+        <hr>
+
+        <div class="row">
+            {% if request.user.can_assign_eng %}
+            <div class="row col-lg-4">
+                <form action="{% url 'assign-engineer' complaint.slug %}"
+                    method="post">
+                    {% csrf_token %}
+                    {{assign_engineer_form|crispy}}
+                </form>
+            </div>
+            {% endif %}
+
+            {% if request.user.can_assign_eng_asst %}
+            <div class="row col-lg-4">
+                <form
+                    action="{% url 'assign-engineering-assistant' complaint.slug %}"
+                    method="post">
+                    {% csrf_token %}
+                    {{assign_engineering_assistant_form|crispy}}
+                </form>
+            </div>
+            {% endif %}
+
+            {% if request.user.can_assign_tech %}
+            <div class="row col-lg-4">
+                <form action="{% url 'assign-technician' complaint.slug %}"
+                    method="post">
+                    {% csrf_token %}
+                    {{assign_technician_form|crispy}}
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+    </section>
+    <section class="col p-3 bg-white">
         <h1 class="display-4">Comments</h1>
         <hr>
         <form action=""
@@ -163,7 +164,7 @@
             <p class="text-center">No comments yet</p>
             {% endfor %}
     </section><br><br>
-    <section class="p-lg-5 bg-white">
+    <section class="col p-3">
         <h1 class="display-4">Images</h1>
         <hr>
         <a class="btn btn-dark text-white"
@@ -203,7 +204,7 @@
         </div>
         <br><br>
     </section>
-    <section class="col p-lg-5">
+    <section class="col p-3 bg-white">
         <h1 class="display-4">Technician's Report</h1>
         <hr>
         {% if request.user.is_technician %}
@@ -221,11 +222,12 @@
                     src="{% static 'icons/delete.svg'%}"
                     alt="{% static 'icons/delete.svg'%}"></a>
         <p>{{doc.comment|capfirst}} {{doc.created_by|lower}}</p>
-        </p><hr>
+        </p>
+        <hr>
         {% endfor %}
         <br><br>
     </section>
-    <section class="col p-lg-5 bg-white">
+    <section class="col p-3">
         <h1 class="display-4">Engineering Assistant's Report</h1>
         <hr>
         {% if request.user.is_engineering_assistant %}
@@ -249,7 +251,7 @@
         {% endfor %}
         <br><br>
     </section>
-    <section class="col p-lg-5">
+    <section class="col p-3 bg-white">
         <h1 class="display-4">Engineer's Report</h1>
         <hr>
         {% if request.user.is_engineer %}
@@ -273,7 +275,7 @@
         {% endfor %}
         <br><br>
     </section>
-    <section class="col p-lg-5 bg-white">
+    <section class="col p-3">
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="display-4">Chief Engineer Review</h1>
             {% if request.user.role == "chief engineer" %}

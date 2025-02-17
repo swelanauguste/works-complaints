@@ -54,11 +54,10 @@
     </div>
 
     {% for ob in object_list %}
-    <div class="d-flex justify-content-center">
+    <div class="row col-lg-4 mx-auto">
         <a class="link"
             href="{% url 'detail' ob.slug %}">
-            <div class="rounded-4 p-3 mb-3 shadow bg-white"
-                style="max-width: 32rem;">
+            <div class="rounded-4 p-3 mb-3 shadow bg-white">
 
                 <span class="fw-bold">{{ob.ref|upper}}</span>
                 <br><br>
