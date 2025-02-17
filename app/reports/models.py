@@ -30,6 +30,7 @@ class TechnicalReportDocument(models.Model):
     def __str__(self):
         return f"{self.complaint}"
 
+
 class EngineeringAssistantReportDocument(models.Model):
     complaint = models.ForeignKey(
         Complaint,
@@ -55,6 +56,8 @@ class EngineeringAssistantReportDocument(models.Model):
 
     def __str__(self):
         return f"{self.complaint}"
+
+
 class EngineerReportDocument(models.Model):
     complaint = models.ForeignKey(
         Complaint,
@@ -80,9 +83,6 @@ class EngineerReportDocument(models.Model):
 
     def __str__(self):
         return f"{self.complaint}"
-
-
-
 
 
 class Programme(models.Model):

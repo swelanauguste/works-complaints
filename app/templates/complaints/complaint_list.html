@@ -6,7 +6,7 @@
 <div class="py-5">
     <form method="GET"
         action="{% url 'list' %}">
-        <div class="col-lg-6 mx-auto px-lg-0">
+        <div class="col-lg-3 mx-auto px-lg-0">
             <input class="form-control"
                 type="text"
                 name="search"
@@ -49,16 +49,16 @@
     </form>
     <br>
     <div class="d-flex justify-content-center">
-
         {% include 'complaints/includes/pagination.html' %}
     </div>
 
         {% for ob in object_list %}
         <div class="d-flex justify-content-center">
-            <div class="rounded-4 p-3 mb-3 shadow bg-white"
-                style="width: 32rem;">
-                <a class="link"
+            <a class="link"
                     href="{% url 'detail' ob.slug %}">
+            <div class="rounded-4 p-3 mb-3 shadow bg-white"
+                style="max-width: 32rem;">
+                
                     <span class="fw-bold">{{ob.ref|upper}}</span>
                     <br><br>
                     <span>{{ob.name}}</span><br>
@@ -76,8 +76,9 @@
                     <span class="small text-muted text-end">updated:
                         {{ob.updated_at|naturaltime}}
                         ({{ob.updated_at}})</span><br>
-                </a>
+               
             </div>
+        </a>
     </div>
 
 
