@@ -37,11 +37,13 @@
         <p title="date"><strong>Date:
             </strong>{{complaint.date}}({{complaint.created_at|naturaltime}})
         </p>
+
         {% if complaint.form %}
         <p title="Complaints form"><strong>Form: </strong><a target="_blank"
                 href="{{complaint.form.url}}">{{complaint.form|lower}}</a>
         </p>
         {% endif %}
+        
         {% if complaint.letters.first.letter %}
         <p title="acknowledgment letter">
             <strong>Acknowledgment Letter: </strong>

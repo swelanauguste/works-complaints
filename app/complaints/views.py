@@ -7,9 +7,9 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView
 from reports.models import (
     ComplaintReview,
+    EngineeringAssistantReportDocument,
     EngineerReportDocument,
     TechnicalReportDocument,
-    EngineeringAssistantReportDocument
 )
 
 from .forms import (
@@ -172,7 +172,7 @@ def assign_technician(request, slug):
             assign.created_by = request.user  # Ensure created_by is assigned
             assign.save()
             messages.info(request, f"This complaint was assign to {assign.technician}")
-    
+
             # Redirect to the complaint detail page
             return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
     return redirect(reverse_lazy("detail", kwargs={"slug": slug}))
@@ -263,7 +263,9 @@ def complaint_list(request):
     if request.user.role == "engineer":
         complaints = complaints.filter(assignengineer__engineer=request.user).distinct()
     if request.user.role == "assistant":
-        complaints = complaints.filter(assignengineeringassistant__engineering_assistant=request.user).distinct()
+        complaints = complaints.filter(
+            assignengineeringassistant__engineering_assistant=request.user
+        ).distinct()
     # assigned_engineer = AssignEngineer.objects.filter(complaint=complaint).first()
     # category_filter = request.GET.get("category", None)
     # if category_filter:
@@ -394,7 +396,9 @@ def complaint_update(request, slug):
         # Process the form submission
         form = ComplaintForm(request.POST, request.FILES, instance=complaint)
         if form.is_valid():
-            form.save()
+            complaint = form.save(commit=False)
+            complaint.updated_by = request.user  # Track who updated it
+            complaint.save()
             # Redirect to the complaint detail page after a successful update
             return redirect(reverse("detail", kwargs={"slug": complaint.slug}))
     else:

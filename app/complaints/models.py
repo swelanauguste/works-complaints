@@ -39,14 +39,14 @@ class Complaint(models.Model):
     complaint = models.TextField(null=True)
     lat_location = models.FloatField("latitude", null=True, blank=True)
     long_location = models.FloatField("longitude", null=True, blank=True)
-    location = models.CharField(max_length=200, null=True, blank=True)
+    location = models.TextField(max_length=200, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="updated_by", null=True
+        User, on_delete=models.CASCADE, related_name="created_by", null=True
     )
     updated_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="created_by", null=True
+        User, on_delete=models.CASCADE, related_name="updated_by", null=True
     )
     form = models.FileField(upload_to="forms", null=True, blank=True)
 
