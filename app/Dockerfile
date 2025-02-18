@@ -80,3 +80,5 @@ USER app
 
 # run entrypoint.sh
 ENTRYPOINT ["/home/app/web/entrypoint.sh"]
+
+CMD ["gunicorn", "cf.wsgi:application", "--bind", "0.0.0.0:8001"]
