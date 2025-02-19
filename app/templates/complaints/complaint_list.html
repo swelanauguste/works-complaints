@@ -6,7 +6,7 @@
 <div class="py-5">
     <form method="GET"
         action="{% url 'list' %}">
-        <div class="col-lg-6 mx-auto px-lg-0">
+        <div class="col-lg-3 mx-auto px-lg-0">
             <input class="form-control"
                 type="text"
                 name="search"
@@ -16,7 +16,7 @@
                     href="{% url 'list' %}">reset</a></p>
         </div>
         <br>
-        {% if request.user.role == "admin" %}
+        {% if request.user.role == "chief engineer" %}
         <div class="col-lg-3 mx-auto mt-2 mt-lg-0">
             <select id="filter-zones"
                 name="zone"
@@ -49,39 +49,39 @@
     </form>
     <br>
     <div class="d-flex justify-content-center">
-
         {% include 'complaints/includes/pagination.html' %}
     </div>
 
-        {% for ob in object_list %}
-        <div class="d-flex justify-content-center">
-            <div class="rounded-4 p-3 mb-3 shadow bg-white"
-                style="width: 32rem;">
-                <a class="link"
-                    href="{% url 'detail' ob.slug %}">
-                    <span class="fw-bold">{{ob.ref|upper}}</span>
-                    <br><br>
-                    <span>{{ob.name}}</span><br>
-                    <span>{{ob.phone}}</span><br>
-                    {% if ob.email %}
-                    <span>{{ob.email}}</span><br>
-                    {% endif %}
-                    {% if ob.address %}
-                    <span>{{ob.address}}</span>
-                    {% endif %}
+    {% for ob in object_list %}
+    <div class="row col-lg-4 mx-auto">
+        <a class="link"
+            href="{% url 'detail' ob.slug %}">
+            <div class="rounded-4 p-3 mb-3 shadow bg-white">
 
-                    <br><br>
-                    <span>{{ob.complaint|truncatechars:100|capfirst}}</span>
-                    <br><br>
-                    <span class="small text-muted text-end">updated:
-                        {{ob.updated_at|naturaltime}}
-                        ({{ob.updated_at}})</span><br>
-                </a>
+                <span class="fw-bold">{{ob.ref|upper}}</span>
+                <br><br>
+                <span>{{ob.name}}</span><br>
+                <span>{{ob.phone}}</span><br>
+                {% if ob.email %}
+                <span>{{ob.email}}</span><br>
+                {% endif %}
+                {% if ob.address %}
+                <span>{{ob.address}}</span>
+                {% endif %}
+
+                <br><br>
+                <span>{{ob.complaint|truncatechars:100|capfirst}}</span>
+                <br><br>
+                <span class="small text-muted text-end">updated:
+                    {{ob.updated_at|naturaltime}}
+                    ({{ob.updated_at}})</span><br>
+
             </div>
+        </a>
     </div>
 
 
-        <!-- <tr>
+    <!-- <tr>
                     <th scope="row">{{forloop.counter}}</th>
                     <td><a
                             href="{% url 'detail' ob.slug %}">{{ob.ref|upper}}</a>
@@ -91,12 +91,12 @@
                     <td class="h-col">{{ob.complaint|truncatechars:100|capfirst}}</td>
 
                 </tr> -->
-        {% empty %}
-        
-        <div class="d-flex justify-content-center">
-            <p class="text-center">No complaints</p>
-        </div>
-    
+    {% empty %}
+
+    <div class="d-flex justify-content-center">
+        <p class="text-center">No complaints</p>
+    </div>
+
     {% endfor %}
     <br>
     <div class="d-flex justify-content-center">

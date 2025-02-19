@@ -3,7 +3,7 @@
 ###########
 
 # pull official base image
-FROM python:3.13.0rc2-bookworm as builder
+FROM python:3.13.0rc2-bookworm AS builder
 
 # set work directory
 WORKDIR /usr/src/app
@@ -14,12 +14,14 @@ ENV PYTHONUNBUFFERED 1
 
 # install system dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc
+    apt-get install -y --no-install-recommends gcc && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # lint
 RUN pip install --upgrade pip
 # RUN pip install flake8==6.0.0
-COPY . /usr/src/app/
+# COPY . /usr/src/app/
 # RUN flake8 --ignore=E501,F401 .
 
 # install python dependencies
@@ -48,17 +50,24 @@ RUN mkdir $APP_HOME/staticfiles
 RUN mkdir $APP_HOME/mediafiles
 WORKDIR $APP_HOME
 
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
 # install dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends netcat-traditional
-COPY --from=builder /usr/src/app/wheels /wheels
-COPY --from=builder /usr/src/app/requirements.txt .
-RUN pip install --upgrade pip
-RUN pip install --no-cache /wheels/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends netcat-traditional && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # copy entrypoint.sh
 COPY ./entrypoint.sh .
 RUN sed -i 's/\r$//g'  $APP_HOME/entrypoint.sh
 RUN chmod +x  $APP_HOME/entrypoint.sh
+
+# install python dependencies
+COPY --from=builder /usr/src/app/wheels /wheels
+RUN pip install --no-cache /wheels/*
 
 # copy project
 COPY . $APP_HOME
@@ -71,3 +80,5 @@ USER app
 
 # run entrypoint.sh
 ENTRYPOINT ["/home/app/web/entrypoint.sh"]
+
+CMD ["gunicorn", "cf.wsgi:application", "--bind", "0.0.0.0:8001"]

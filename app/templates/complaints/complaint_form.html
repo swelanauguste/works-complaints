@@ -5,7 +5,8 @@
 
 {% block content %}
 <div class="container-fluid">
-  <form method="post" enctype="multipart/form-data">
+  <form method="post"
+    enctype="multipart/form-data">
     <h1 class="display-4">Create</h1>
     <hr>
     {% csrf_token %}
@@ -41,10 +42,11 @@
       <span class="col-lg-3">
         {{ form.long_location|as_crispy_field }}
       </span>
-      <span class="col-lg-3">
-        {{ form.location|as_crispy_field }}
-      </span>
+
     </div>
+    <span class="row">
+      {{ form.location|as_crispy_field }}
+    </span>
     <div class="row">
       <span> {{ form.form|as_crispy_field }}</span>
     </div>
