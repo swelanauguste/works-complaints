@@ -191,7 +191,7 @@ else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     # EMAIL_HOST = "mail.govt.lc"
     EMAIL_HOST = "smtp.gmail.com"
-    EMAIL_HOST_USER = "complaints.infrastructure@gmail.com"
+    EMAIL_HOST_USER = os.environ.get("USER")
     EMAIL_HOST_PASSWORD = os.environ.get("PASS")
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
