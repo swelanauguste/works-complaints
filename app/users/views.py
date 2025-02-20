@@ -1,3 +1,5 @@
+import threading
+
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth import views as auth_views
@@ -94,7 +96,7 @@ def activate(request, uidb64, token):
     else:
         return redirect("login")
 
-
+@login_required
 def user_registration_view(request):
     current_site = Site.objects.get_current()
     domain = current_site.domain
@@ -102,13 +104,15 @@ def user_registration_view(request):
         form = UserCustomCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
+            to_email = form.cleaned_data.get("email")
+            password = form.cleaned_data.get("password1")
             user.is_active = False
             user.save()
-            user_registration_email.after_response(
-                request, user, form.cleaned_data["email"]
+            user_registration_email_thread = threading.Thread(
+                target=user_registration_email,
+                args=(request, user, to_email, password),
             )
-            # user_registration_email(request, user, form.cleaned_data.get("email"))
-            return redirect("login")
+            user_registration_email_thread.start()
     else:
         form = UserCustomCreationForm()
     return render(request, "users/register.html", {"form": form})

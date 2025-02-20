@@ -16,7 +16,15 @@ class UserUpdateForm(forms.ModelForm):
 
 
 class UserCustomCreationForm(UserCreationForm):
-    allowed_domains = ["goslnet.gov.lc", "govt.lc"]
+    allowed_domains = [
+        "gosl.gov.lc",
+        "govt.lc",
+        "gmail.com",
+        "yahoo.com",
+        "outlook.com",
+        "icloud.com",
+        "hotmail.com",
+    ]
 
     usable_password = None
 

@@ -33,6 +33,7 @@ class User(AbstractUser):
     can_assign_eng_asst = models.BooleanField(default=False)
     can_assign_tech = models.BooleanField(default=False)
     can_approve_works = models.BooleanField(default=False)
+    can_register_users = models.BooleanField(default=False)
     is_complaints_officer = models.BooleanField(default=False)
     is_engineer = models.BooleanField(default=False)
     is_engineering_assistant = models.BooleanField(default=False)

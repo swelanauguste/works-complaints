@@ -110,7 +110,8 @@
 </div>
 {% if request.user.is_authenticated %}
 <div class="fixed-bottom">
-    <div class="d-flex justify-content-around bg-dark pt-2 pb-lg-2 pb-4 border-top border-light">
+    <div
+        class="d-flex justify-content-around bg-dark pt-2 pb-lg-2 pb-4 border-top border-light">
         <a href="#"
             onclick="history.back()"><img src="{% static 'icons/back.svg'%}"
                 alt="{% static 'icons/back.svg'%"></a>
@@ -120,6 +121,14 @@
         <a class="text-white"
             href="{% url 'create' %}"><img src="{% static 'icons/add3.svg'%}"
                 alt="{% static 'icons/add3.svg'%"></a>
+
+        {% if request.user.can_register_users %}
+        <a class="text-white"
+            href="{% url 'create' %}"><img
+                src="{% static 'icons/add_user.svg'%}"
+                alt="{% static 'icons/add_user.svg'%"></a>
+        {% endif %}
+
         <!-- <a class="text-white"
             href=""><img src="{% static 'icons/profile.svg'%}"
                 alt="{% static 'icons/profile.svg'%"></a> -->

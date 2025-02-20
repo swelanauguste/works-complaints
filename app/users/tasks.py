@@ -11,7 +11,8 @@ from django.utils.http import urlsafe_base64_encode
 from .tokens import account_activation_token
 
 
-def user_registration_email(request, user, to_email):
+
+def user_registration_email(request, user, to_email, password):
     current_site = Site.objects.get_current()
     domain = current_site.domain
     activation_url = reverse(
@@ -23,16 +24,17 @@ def user_registration_email(request, user, to_email):
     )
     full_activation_url = f"{domain}{activation_url}"
     # activation_url = f"{domain}users/activate/{urlsafe_base64_encode(force_bytes(user.pk))}/{account_activation_token.make_token(user)}"
-    subject = "Activate Your Accountant General's Department Payslips Account"
+    subject = "User Registration"
 
     html_message = render_to_string(
         "users/email/user_registration_email.html",
         {
             "user": user.username,
+            "password": password,
             "domain": domain,
             "uid": urlsafe_base64_encode(force_bytes(user.pk)),
             "token": account_activation_token.make_token(user),
-            "protocol": "https" if request.is_secure() else "http",
+            "protocol": "https://" if request.is_secure() else "http://",
             "full_activation_url": full_activation_url,
         },
     )

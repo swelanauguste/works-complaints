@@ -8,6 +8,8 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.html import strip_tags
 
+protocol = "http://"
+
 
 def generate_short_id():
     length = 8  # You can adjust the length as needed
@@ -24,6 +26,7 @@ def engineer_assigned_email(instance):
         "complaints/emails/engineer_assigned_email.html",
         {
             "complaint": instance.complaint,
+            "protocol": protocol,
             "full_url": full_url,
             "engineer": instance.engineer,
         },
@@ -46,6 +49,7 @@ def engineering_assistant_assigned_email(instance):
         "complaints/emails/engineering_assistant_assigned_email.html",
         {
             "complaint": instance.complaint,
+            "protocol": protocol,
             "full_url": full_url,
             "engineering_assistant": instance.engineering_assistant,
         },
@@ -68,6 +72,7 @@ def send_technician_assigned_email(instance):
         "complaints/emails/technician_assigned_email.html",
         {
             "complaint": instance.complaint,
+            "protocol": protocol,
             "full_url": full_url,
             "technician": instance.technician,
         },
@@ -94,7 +99,7 @@ def send_complaint_creation_email(complaint):
         receipt_email_list.append(complaint.email)
     html_message = render_to_string(
         "complaints/emails/new_complaint.html",
-        {"complaint": complaint, "full_url": full_url},
+        {"complaint": complaint, "protocol": protocol, "full_url": full_url},
     )
     plain_message = strip_tags(html_message)
 
