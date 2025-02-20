@@ -96,6 +96,7 @@ def activate(request, uidb64, token):
     else:
         return redirect("login")
 
+
 @login_required
 def user_registration_view(request):
     current_site = Site.objects.get_current()
